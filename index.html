@@ -1316,24 +1316,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Typing Effect ---
 function initializeTypingEffect() {
     const element = document.querySelector('.typing-effect');
-    const text = "Daniel Jalali";
-    let index = 0;
+    const texts = ["Daniel Jalali", "a Data Engineer ⚙️", "a Software Dev", "a {Computer Nerd} ☕"];
+    let textIndex = 0;
+    let charIndex = 0;
     let isDeleting = false;
 
     function type() {
-        if (!isDeleting && index < text.length) {
-            element.textContent += text[index];
-            index++;
+        const currentText = texts[textIndex];
+        if (!isDeleting && charIndex < currentText.length) {
+            element.textContent += currentText[charIndex];
+            charIndex++;
             setTimeout(type, 100);
-        } else if (isDeleting && index > 0) {
-            element.textContent = text.substring(0, index - 1);
-            index--;
+        } else if (isDeleting && charIndex > 0) {
+            element.textContent = currentText.substring(0, charIndex - 1);
+            charIndex--;
             setTimeout(type, 50);
-        } else if (!isDeleting && index === text.length) {
+        } else if (!isDeleting && charIndex === currentText.length) {
             isDeleting = true;
             setTimeout(type, 1000);
-        } else if (isDeleting && index === 0) {
+        } else if (isDeleting && charIndex === 0) {
             isDeleting = false;
+            textIndex = (textIndex + 1) % texts.length;
             setTimeout(type, 500);
         }
     }

@@ -2,9 +2,9 @@
 /* Custom cursor style */
 .custom-cursor {
     position: fixed;
-    width: 20px;
-    height: 20px;
-    background-color: rgb(228, 228, 228);
+    width: 15px;
+    height: 15px;
+    background-color: #00f078;
     border-radius: 50%;
     pointer-events: none; /* Prevent cursor from interacting with elements */
     z-index: 9999; /* Ensure the cursor stays on top */
@@ -12,6 +12,6 @@
     transition: all 0.1s ease; /* Smooth cursor movement */
     }
     .custom-cursor.hovered {
-    background-color: blue; /* Change color when hovering */
+    background-color: #ffffff; /* Change color when hovering */
     transform: scale(1.5); /* Increase size on hover */
 }

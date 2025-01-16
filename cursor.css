@@ -1,17 +1,17 @@
 /*Cursor styles*/
-/* Custom cursor style */
-.custom-cursor {
+
+/* .custom-cursor {
     position: fixed;
     width: 15px;
     height: 15px;
-    background-color: #00f078;
+    background-color: #00ff9d;
     border-radius: 50%;
-    pointer-events: none; /* Prevent cursor from interacting with elements */
-    z-index: 9999; /* Ensure the cursor stays on top */
-    transform: translate(-50%, -50%); /* Center the cursor */
-    transition: all 0.1s ease; /* Smooth cursor movement */
+    pointer-events: none; 
+    z-index: 9999; 
+    transform: translate(-50%, -50%); 
+    transition: all 0.1s ease;
     }
     .custom-cursor.hovered {
-    background-color: #ffffff; /* Change color when hovering */
-    transform: scale(1.5); /* Increase size on hover */
-}
+    background-color: #ffffff; 
+    transform: scale(1.5); 
+} */

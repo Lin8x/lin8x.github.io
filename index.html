@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="background.css">
     <script src="flame.js" defer></script>
     <link rel="stylesheet" href="flame.css">
+    <link rel="icon" type="image/x-icon" href="images/danielicon.ico" />
     <style>
         /* Global Styles */
         * {
@@ -596,6 +597,9 @@
 
         <!-- Hero Section -->
         <section class="hero">
+            <div class="image">
+                <img src="images/danielicon.ico" id="animatedIcon"></img>
+            </div>
             <div class="hero-intro">
                 <h1>Hello, I'm</h1>
                 <h1 class="typing-effect"></h1>
@@ -727,6 +731,34 @@
                     <div class="skill-item" data-main-category="data-engineering" data-sub-category="ana">
                         <img src="images/grafana.png" alt="Grafana">
                         <p>Grafana</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azuresql.png" alt="Azure SQL Database">
+                        <p>Azure SQL Database</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azurecosmosdb.png" alt="Azure Cosmos DB">
+                        <p>Azure Cosmos DB</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azureblobstorage.png" alt="Azure Blob Storage">
+                        <p>Azure Blob Storage</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azurefiles.png" alt="Azure Files">
+                        <p>Azure Files</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azuredatafactory.webp" alt="Azure Data Factory">
+                        <p>Azure Data Factory</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azuresynapseanalytics.png" alt="Azure Synapse Analytics">
+                        <p>Azure Synapse Analytics</p>
+                    </div>
+                    <div class="skill-item" data-main-category="data-engineering" data-sub-category="infa">
+                        <img src="images/azuredatabricks.png" alt="Azure Databricks">
+                        <p>Azure Databricks</p>
                     </div>
 
                     <!-- Game Development Skills -->
@@ -1311,7 +1343,19 @@ document.addEventListener('DOMContentLoaded', () => {
     updateHeroButtons(defaultCategory);
     showRelevantFilterButtons(defaultCategory);
     filterSkills('all', defaultCategory);
+    iconEffect();
 });
+
+function iconEffect(){
+    gsap.to("#animatedIcon", {
+        duration: 3,           // Animation duration in seconds
+        rotation: -4,         // Rotate 360 degrees
+        scale: 1.05,            // Scale up to 1.2 times
+        repeat: -1,            // Infinite loop
+        yoyo: true,            // Reverse on every alternate loop
+        ease: "power1.inOut",  // Smooth easing
+    });
+}
 
 // --- Typing Effect ---
 function initializeTypingEffect() {

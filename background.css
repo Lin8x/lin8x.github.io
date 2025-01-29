@@ -19,7 +19,7 @@ body {
 .blur-circle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(0, 255, 157, 0.3);
+    background: rgba(0, 255, 157, 0.123);
     filter: blur(50px);
     animation: float 8s infinite alternate ease-in-out;
 }

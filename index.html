@@ -657,18 +657,25 @@
         }
 
         .carousel-dots .dot.active {
-        background: #333;
+            background: #333;
         }
 
         .card-container-small {
+            max-width: 800px;
+            margin: 0 auto; /* Default: center on wide screens */
             display: flex;
             flex-wrap: wrap;
             gap: 3rem;
-            margin-bottom: 2.5rem;
-            margin-right: 2.5rem;
-            margin-left: 2.5rem;
-            max-width: 900;
             align-items: flex-start;
+            margin-bottom: 2.5rem;
+            }
+
+            /* For screens narrower than 900px, add 2.5rem side margins */
+            @media (max-width: 800px) {
+            .card-container-small {
+                margin-left: 2.5rem;
+                margin-right: 2.5rem;
+            }
         }
 
         .about {

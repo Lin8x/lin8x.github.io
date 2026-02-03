@@ -1,0 +1,42 @@
+---
+interface Props {
+	title: string;
+    track?: string;
+}
+
+const { title, track } = Astro.props;
+import HUD from '../components/game/HUD';
+import Miku from '../components/game/Miku';
+import ContactForm from '../components/ContactForm';
+import Shop from '../components/game/Shop';
+import GameEffects from '../components/game/GameEffects';
+import NavBar from '../components/NavBar.astro';
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Daniel Jalali - Software Engineer" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="bg-brand-dark text-white font-sans antialiased min-h-screen selection:bg-brand-primary selection:text-white pt-16">
+        <!-- Navigation -->
+        <NavBar track={track} />
+
+        <!-- Gamification Layer -->
+        <HUD client:only="react" />
+        <Miku client:only="react" />
+        <Shop client:only="react" />
+        <GameEffects client:only="react" />
+        
+        <!-- Global Contact Form (Floating) -->
+        <ContactForm client:load />
+
+		<slot />
+	</body>
+</html>

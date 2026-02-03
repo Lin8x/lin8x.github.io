@@ -1,0 +1,146 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  
+  .animate-slide-in-right {
+    animation: slideInRight 0.6s ease-out forwards;
+  }
+
+  .animate-slide-in-top {
+    animation: slideInTop 0.5s ease-out forwards;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0d0208; 
+}
+::-webkit-scrollbar-thumb {
+  background: #333; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff41; 
+}
+
+/* Matrix Theme */
+.theme-matrix {
+    --brand-primary: #00ff41;
+    --brand-dark: #000000;
+    background-color: #000000;
+    background-image: linear-gradient(0deg, rgba(0, 50, 0, 0.2) 2px, transparent 2px),
+                      linear-gradient(90deg, rgba(0, 50, 0, 0.2) 2px, transparent 2px);
+    background-size: 50px 50px;
+    color: #00ff41;
+    font-family: 'Courier New', Courier, monospace;
+}
+.theme-matrix .bg-brand-dark {
+    background-color: #000000 !important;
+}
+.theme-matrix .card, .theme-matrix .bg-gray-900 {
+    background-color: #0a0a0a !important;
+    border: 1px solid #00ff41 !important;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+}
+.theme-matrix h1, .theme-matrix h2, .theme-matrix h3 {
+    text-shadow: 0 0 8px #00ff41;
+    letter-spacing: 2px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@layer utilities {
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+}
+
+/* Custom Scrollbar for "Gamer" feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #111; 
+}
+::-webkit-scrollbar-thumb {
+  background: #0dbb63; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2D6CDF; 
+}
+
+/* Matrix Theme Override */
+body.theme-matrix {
+  background-color: #000 !important;
+  font-family: 'Courier New', monospace;
+}
+body.theme-matrix * {
+  /* Green tint to everything */
+  text-shadow: 0 0 2px #0f0;
+  border-color: #0f0 !important;
+}
+body.theme-matrix h1, body.theme-matrix h2, body.theme-matrix h3 {
+  color: #0f0 !important;
+}
+body.theme-matrix p {
+  color: #0a0 !important;
+}
+
+/* Matrix Theme Override */
+body.theme-matrix {
+  font-family: 'Courier New', monospace;
+}
+body.theme-matrix * {
+  /* Green tint to everything */
+  text-shadow: 0 0 2px #0f0;
+}
+body.theme-matrix h1, body.theme-matrix h2, body.theme-matrix h3 {
+}
+body.theme-matrix p {
+}
+

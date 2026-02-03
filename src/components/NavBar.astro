@@ -1,0 +1,120 @@
+---
+import { trackConfig } from '../data/portfolio';
+
+interface Props {
+  track?: string;
+}
+
+const { track } = Astro.props;
+const currentResume = track && trackConfig[track] ? trackConfig[track].resume : '/resumes/Daniel_Jalali_Resume_Data.pdf';
+
+const tracks = [
+  { name: 'Cloud Engineer', path: '/cloud' },
+  { name: 'Data Engineer', path: '/dataengineer' },
+  { name: 'Game Developer', path: '/gamedev' },
+  { name: 'Software Engineer', path: '/software-engineer' },
+];
+---
+
+<nav class="fixed top-0 left-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-gray-800 animate-slide-in-top">
+  <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="text-xl font-bold flex items-center gap-3 hover:text-brand-primary transition group">
+      <div class="w-10 h-10 flex items-center justify-center">
+        <img src="/images/profile/danielicon.png" alt="DJ" class="w-full h-full object-contain drop-shadow-md group-hover:scale-110 transition-transform duration-300" />
+      </div>
+      <span class="tracking-tight">Daniel Jalali</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+      <a href="/" class="hover:text-white transition">Home</a>
+      
+      <!-- Tracks Dropdown -->
+      <div class="relative group">
+        <button class="flex items-center gap-1 hover:text-white transition py-4">
+          Tracks
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down group-hover:rotate-180 transition-transform"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="absolute top-full left-0 w-48 bg-gray-900 border border-gray-800 rounded-lg shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all transform translate-y-2 group-hover:translate-y-0">
+          {tracks.map(t => (
+            <a href={t.path} class={`block px-4 py-2 hover:bg-gray-800 hover:text-brand-primary transition ${track === t.path.substring(1) ? 'text-brand-primary' : ''}`}>
+              {t.name}
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <button id="nav-shop-btn" class="hover:text-white transition flex items-center gap-1 group">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag group-hover:text-brand-primary transition"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Shop</span>
+      </button>
+
+      <a href={currentResume} target="_blank" class="hover:text-white transition group flex items-center gap-1">
+        Resume
+        {track && <span class="text-xs bg-gray-800 px-1.5 py-0.5 rounded text-gray-400 group-hover:text-brand-primary border border-gray-700">{track.toUpperCase()}</span>}
+      </a>
+      
+      <button id="nav-contact-btn" class="px-4 py-2 bg-brand-primary text-black font-bold border border-brand-primary rounded-lg hover:bg-white hover:border-white transition transform hover:-translate-y-0.5 shadow-lg shadow-brand-primary/20">
+        Contact
+      </button>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu (Hidden by default) -->
+  <div id="mobile-menu" class="hidden md:hidden bg-gray-900 border-t border-gray-800 absolute top-16 left-0 w-full p-4 flex-col gap-4 shadow-xl">
+      <a href="/" class="block py-2 px-4 hover:bg-gray-800 rounded">Home</a>
+      
+      <div class="py-2 border-t border-gray-800 border-b my-2">
+        <span class="block px-4 text-xs text-gray-500 uppercase tracking-widest mb-2">Tracks</span>
+        {tracks.map(t => (
+            <a href={t.path} class={`block px-4 py-2 hover:bg-gray-800 rounded ${track === t.path.substring(1) ? 'text-brand-primary' : 'text-gray-300'}`}>
+              {t.name}
+            </a>
+          ))}
+      </div>
+
+      <a href={currentResume} target="_blank" class="block py-2 px-4 hover:bg-gray-800 rounded">Resume</a>
+      <button id="mobile-shop-btn" class="w-full text-left py-2 px-4 hover:bg-gray-800 rounded flex items-center gap-2">
+         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+         Shop
+      </button>
+      <button id="mobile-contact-btn" class="w-full text-left py-2 px-4 bg-brand-primary text-black font-bold rounded hover:bg-white transition mt-2">
+         Contact Me
+      </button>
+  </div>
+</nav>
+
+<script>
+  // Mobile Menu Toggle
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+    menu?.classList.toggle('flex');
+  });
+
+  // Contact Button Handler
+  document.getElementById('nav-contact-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-contact-modal'));
+  });
+  document.getElementById('mobile-contact-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-contact-modal'));
+    menu?.classList.add('hidden'); // Close menu
+  });
+
+  // Shop Button Handler
+  document.getElementById('nav-shop-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-shop-modal'));
+  });
+  document.getElementById('mobile-shop-btn')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('open-shop-modal'));
+        menu?.classList.add('hidden'); // Close menu
+  });
+</script>

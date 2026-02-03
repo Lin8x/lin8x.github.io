@@ -1,0 +1,140 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PersonalModules from '../components/PersonalModules';
+import { degrees } from '../data/portfolio';
+---
+
+<Layout title="Daniel Jalali | Portfolio">
+	<main class="container mx-auto px-4 py-32 flex flex-col items-center justify-center min-h-screen text-center">
+		
+        <!-- Hero Section -->
+        <div class="min-h-[90vh] flex flex-col justify-center items-center w-full">
+            <div class="mb-12 relative group animate-fade-in-up">
+                <div class="w-64 h-64 relative z-10 transition transform group-hover:scale-105 duration-500">
+                    <img src="/images/profile/danielicon.png" alt="Daniel Jalali" class="w-full h-full object-contain filter drop-shadow-2xl animate-float" />
+                </div>
+                <!-- Background decorative glow -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-brand-primary/20 blur-[100px] -z-10 animate-pulse"></div>
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold mb-8 tracking-tight animate-fade-in-up">
+                Hi, I'm <span class="text-brand-primary">Daniel Jalali</span>.
+            </h1>
+            
+            <p class="text-xl md:text-3xl text-gray-300 max-w-3xl mb-16 leading-relaxed font-light animate-fade-in-up">
+                Software Engineer specializing in <span class="text-white font-semibold">Cloud</span>, <span class="text-white font-semibold">Data</span>, and <span class="text-white font-semibold">Scalable Systems</span>.
+            </p>
+            
+            <!-- Exploration Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl px-4 animate-fade-in-up">
+                <a href="/cloud" class="group relative overflow-hidden p-8 rounded-3xl bg-gray-900 border border-gray-800 hover:border-brand-primary transition-all duration-300 hover:shadow-2xl hover:shadow-brand-primary/10 text-left">
+                    <div class="absolute inset-0 bg-brand-primary/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-primary transition">Cloud Engineering</h3>
+                    <p class="text-gray-400 text-sm">Resilient infrastructure & AWS architecture.</p>
+                    <span class="absolute bottom-6 right-6 text-brand-primary opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition duration-300">→</span>
+                </a>
+                
+                <a href="/dataengineer" class="group relative overflow-hidden p-8 rounded-3xl bg-gray-900 border border-gray-800 hover:border-brand-secondary transition-all duration-300 hover:shadow-2xl hover:shadow-brand-secondary/10 text-left">
+                    <div class="absolute inset-0 bg-brand-secondary/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-secondary transition">Data Engineering</h3>
+                    <p class="text-gray-400 text-sm">ETL Pipelines & Big Data Systems.</p>
+                    <span class="absolute bottom-6 right-6 text-brand-secondary opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition duration-300">→</span>
+                </a>
+
+                <a href="/gamedev" class="group relative overflow-hidden p-8 rounded-3xl bg-gray-900 border border-gray-800 hover:border-purple-500 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/10 text-left">
+                    <div class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-purple-500 transition">Game Development</h3>
+                    <p class="text-gray-400 text-sm">Interactive 3D Experiences & Unity.</p>
+                    <span class="absolute bottom-6 right-6 text-purple-500 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition duration-300">→</span>
+                </a>
+
+                <a href="/software-engineer" class="group relative overflow-hidden p-8 rounded-3xl bg-gray-900 border border-gray-800 hover:border-blue-500 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 text-left">
+                    <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-blue-500 transition">Software Engineering</h3>
+                    <p class="text-gray-400 text-sm">Full-Stack Development & Tooling.</p>
+                    <span class="absolute bottom-6 right-6 text-blue-500 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition duration-300">→</span>
+                </a>
+            </div>
+            
+            <div class="mt-24 text-gray-700 animate-bounce">
+                <p class="text-xs uppercase tracking-widest mb-2">Scroll to Connect</p>
+                <div class="w-px h-12 bg-gray-800 mx-auto"></div>
+            </div>
+        </div>
+
+        <!-- Mission Status Section -->
+		<section class="min-h-[80vh] w-full flex flex-col justify-center items-center max-w-4xl text-left border-t border-gray-900 pt-32 pb-32 animate-fade-in-up">
+            <h2 class="text-4xl md:text-5xl font-bold text-white mb-24 flex items-center justify-center gap-4">
+                <span class="text-brand-primary">///</span> Mission Status
+            </h2>
+            <div class="text-center md:text-left space-y-12">
+                <p class="text-xl md:text-3xl text-gray-300 leading-relaxed font-light text-center">
+                    Welcome to the digital workspace of <strong class="text-white">Daniel Jalali</strong>. 
+                    I am a Hybrid Engineer bridging the gap between <strong class="text-white">Enterprise Infrastructure</strong> and <strong class="text-white">Interactive Experiences</strong>.
+                </p>
+                <div class="p-10 bg-gray-900/40 border-l-4 border-brand-primary rounded-r-3xl transform hover:scale-[1.02] transition duration-500 max-w-3xl mx-auto mt-16 shadow-2xl">
+                    <blockquote class="text-xl text-gray-300 italic font-serif leading-relaxed">
+                        "The greatest happiness of the greatest number is the foundation of morals and legislation."
+                    </blockquote>
+                    <p class="text-right text-brand-primary font-bold mt-6 text-lg">— Jeremy Bentham</p>
+                </div>
+            </div>
+		</section>
+
+        <!-- Current Objectives -->
+        <section class="min-h-[60vh] w-full flex flex-col justify-center items-center max-w-4xl border-t border-gray-900 py-32 animate-fade-in-up" style="animation-delay: 0.1s;">
+             <h2 class="text-3xl md:text-4xl font-bold text-white mb-12 flex items-center gap-4">
+                <span class="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.5)]"></span>
+                Current Objectives
+            </h2>
+            <!-- Existing objectives code kept simple as requested layout change was mainly for modules/tracks -->
+            <div class="bg-gray-900/30 p-10 rounded-3xl border border-gray-800 hover:border-brand-primary/30 transition duration-300 hover:shadow-2xl hover:shadow-brand-primary/5 backdrop-blur-sm w-full">
+                <ul class="space-y-6 text-gray-400">
+                    <li class="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-gray-800">
+                        <div class="w-2 h-2 rounded-full bg-brand-primary mt-2.5 shrink-0"></div>
+                        <span class="text-lg leading-relaxed">Seeking roles in <strong class="text-white">Cloud Engineering</strong> or <strong class="text-white">Game Development</strong>.</span>
+                    </li>
+                    <li class="flex items-start gap-4 p-4 rounded-xl hover:bg-white/5 transition border border-transparent hover:border-gray-800">
+                        <div class="w-2 h-2 rounded-full bg-brand-secondary mt-2.5 shrink-0"></div>
+                        <span class="text-lg leading-relaxed">Developing self-hosted data solutions on localized infrastructure.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        {/* Education Section - Homepage Exclusive Full View */}
+        <section class="min-h-[60vh] w-full flex flex-col justify-center items-center max-w-6xl border-t border-gray-900 py-32 animate-fade-in-up" style="animation-delay: 0.2s;">
+             <h2 class="text-3xl md:text-4xl font-bold text-white mb-16 flex items-center gap-4">
+                <span class="text-brand-primary">///</span> University Education
+            </h2>
+            <div class="grid grid-cols-1 gap-12 w-full">
+                {degrees.map(degree => (
+                    <div class="bg-gray-900/40 p-10 rounded-3xl border border-gray-800 hover:border-brand-primary transition-all duration-300 relative overflow-hidden group w-full text-left">
+                        <div class="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition duration-500">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        </div>
+                        <h3 class="text-3xl font-bold text-white tracking-tight mb-2 relative z-10">{degree.title}</h3>
+                        <p class="text-xl text-brand-primary mb-8 relative z-10">{degree.institution} <span class="text-gray-600 mx-2">|</span> {degree.year}</p>
+                        
+                        <div class="relative z-10 bg-gray-900/50 p-6 rounded-2xl border border-white/5">
+                            <h4 class="text-xs uppercase tracking-widest text-gray-500 mb-6 font-bold flex items-center gap-2">
+                                <span class="w-1 h-4 bg-brand-primary rounded-full"></span>
+                                Comprehensive Coursework
+                            </h4>
+                            <div class="flex flex-wrap gap-3">
+                                {degree.relevantCourses.map(course => (
+                                    <span class="px-3 py-1.5 bg-gray-800 border border-gray-700 hover:border-brand-primary/50 text-gray-300 text-sm rounded-lg transition duration-300 hover:text-white cursor-default hover:bg-gray-800">
+                                        {course}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </section>
+
+        <!-- Personal Modules Section -->
+        <PersonalModules client:visible />
+	</main>
+</Layout>

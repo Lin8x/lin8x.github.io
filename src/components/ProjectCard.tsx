@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { X, ExternalLink, Github } from 'lucide-react';
 
 interface ProjectCardProps {
@@ -17,6 +17,24 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ title, description, date, tags, image, links, bodyHtml }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Disable background scroll and focus initial element
+      document.body.classList.add('overflow-hidden');
+      closeBtnRef.current?.focus();
+
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setIsOpen(false);
+      };
+      document.addEventListener('keydown', onKeyDown);
+      return () => {
+        document.removeEventListener('keydown', onKeyDown);
+        document.body.classList.remove('overflow-hidden');
+      };
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -57,17 +75,22 @@ export default function ProjectCard({ title, description, date, tags, image, lin
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+          aria-hidden={false}
         >
           <div 
             onClick={(e) => e.stopPropagation()} 
             className="bg-gray-900 border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative animate-in zoom-in-95 duration-200 flex flex-col"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Project details: ${title}`}
           >
             {/* Sticky Header for Close Button */}
             <div className="sticky top-0 right-0 z-10 flex justify-end p-4 bg-gradient-to-b from-black/80 via-black/50 to-transparent pointer-events-none">
                 <button 
                 onClick={() => setIsOpen(false)}
                 className="pointer-events-auto p-2 bg-gray-800 text-gray-400 hover:text-white rounded-full hover:bg-gray-700 transition shadow-lg border border-gray-600"
+                ref={closeBtnRef}
                 >
                 <X size={24} />
                 </button>

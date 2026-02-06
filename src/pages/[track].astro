@@ -42,11 +42,6 @@ const trackProjects = allProjects.filter((project) =>
 ---
 
 <Layout title={`Daniel Jalali | ${title}`}>
-  <div class="fixed inset-0 pointer-events-none z-0">
-    <div class="absolute top-0 right-0 w-1/3 h-1/3 bg-brand-primary opacity-[0.03] blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 left-0 w-1/3 h-1/3 bg-brand-secondary opacity-[0.03] blur-3xl rounded-full -translate-x-1/2 translate-y-1/2"></div>
-  </div>
-
   <div class="container mx-auto px-4 relative z-10">
     
     {/* Navigation Anchor */}
@@ -77,28 +72,7 @@ const trackProjects = allProjects.filter((project) =>
       </div>
     </header>
 
-    {/* Skills Section (Restored) */}
-    {currentSkills.length > 0 && (
-      <section class="min-h-[50vh] flex flex-col justify-center py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
-        <div class="max-w-5xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4">
-            <span class="text-brand-primary">///</span> Technical Arsenal
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {currentSkills.map(skill => (
-                <div class="flex flex-col items-center gap-4 group transition-all duration-500 hover:-translate-y-2">
-                <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-900/50 rounded-2xl flex items-center justify-center p-6 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition shadow-xl shadow-brand-primary/5">
-                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-500 opacity-70 group-hover:opacity-100" />
-                </div>
-                <span class="text-sm font-mono text-gray-500 group-hover:text-white transition uppercase tracking-wider">{skill.name}</span>
-                </div>
-            ))}
-            </div>
-        </div>
-      </section>
-    )}
-
-    {/* Education Section (Moved Above Certs) */}
+    {/* Education Section (Top of page) */}
     <section class="min-h-[40vh] flex flex-col justify-center py-16 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
       <div class="max-w-5xl mx-auto w-full">
          <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
@@ -150,6 +124,27 @@ const trackProjects = allProjects.filter((project) =>
          </div>
       </div>
     </section>
+
+    {/* Skills Section */}
+    {currentSkills.length > 0 && (
+      <section class="min-h-[50vh] flex flex-col justify-center py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
+        <div class="max-w-5xl mx-auto w-full">
+            <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4">
+            <span class="text-brand-primary">///</span> Technical Arsenal
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            {currentSkills.map(skill => (
+                <div class="flex flex-col items-center gap-4 group transition-all duration-500 hover:-translate-y-2">
+                <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-900/50 rounded-2xl flex items-center justify-center p-6 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition shadow-xl shadow-brand-primary/5">
+                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-500 opacity-70 group-hover:opacity-100" />
+                </div>
+                <span class="text-sm font-mono text-gray-500 group-hover:text-white transition uppercase tracking-wider">{skill.name}</span>
+                </div>
+            ))}
+            </div>
+        </div>
+      </section>
+    )}
 
     {/* Certifications & Coursework Section */}
     {currentCerts.length > 0 && (
@@ -253,7 +248,9 @@ const trackProjects = allProjects.filter((project) =>
     {/* Projects Section - Spacious Grid */}
     <section class="min-h-screen py-32 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
         <div class="max-w-7xl mx-auto">
-            <h2 class="text-4xl md:text-6xl font-bold text-white mb-24 text-center tracking-tight">Executed Projects</h2>
+                        <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4 justify-center">
+                            <span class="text-brand-secondary">///</span> Executed Projects
+                        </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {trackProjects.map(async (project) => {
                 const html = await marked.parse(project.body);

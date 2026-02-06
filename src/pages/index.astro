@@ -5,7 +5,7 @@ import { degrees } from '../data/portfolio';
 ---
 
 <Layout title="Daniel Jalali | Portfolio">
-	<main class="container mx-auto px-4 py-32 flex flex-col items-center justify-center min-h-screen text-center">
+	<main class="container mx-auto px-4 py-32 flex flex-col items-center justify-center min-h-screen text-center relative z-10">
 		
         <!-- Hero Section -->
         <div class="min-h-[90vh] flex flex-col justify-center items-center w-full">
@@ -136,5 +136,34 @@ import { degrees } from '../data/portfolio';
 
         <!-- Personal Modules Section -->
         <PersonalModules client:visible />
+
+        <!-- Call to Action Section -->
+        <section class="min-h-[50vh] w-full flex flex-col justify-center items-center max-w-4xl border-t border-gray-900 py-32 animate-fade-in-up" style="animation-delay: 0.3s;">
+            <div class="text-center">
+                <h2 class="text-3xl md:text-5xl font-bold text-white mb-6">Ready to Explore?</h2>
+                <p class="text-xl text-gray-400 mb-12 max-w-2xl">
+                    Dive into my specialized career tracks and discover the projects, skills, and certifications that define my expertise.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="/cloud" class="group px-8 py-4 bg-brand-primary text-black font-bold rounded-xl hover:bg-brand-primary/90 transition-all duration-300 hover:shadow-lg hover:shadow-brand-primary/30 flex items-center gap-3">
+                        <span>Start with Cloud</span>
+                        <span class="transform group-hover:translate-x-1 transition">→</span>
+                    </a>
+                    <a href="/dataengineer" class="px-8 py-4 bg-gray-900 border border-gray-700 text-white font-bold rounded-xl hover:border-brand-secondary hover:text-brand-secondary transition-all duration-300 flex items-center gap-3">
+                        <span>Explore Data Engineering</span>
+                        <span>→</span>
+                    </a>
+                </div>
+                
+                <div class="mt-8 flex justify-center gap-6">
+                    <a href="/gamedev" class="text-gray-500 hover:text-purple-400 transition text-sm underline underline-offset-4">Game Development</a>
+                    <a href="/software-engineer" class="text-gray-500 hover:text-blue-400 transition text-sm underline underline-offset-4">Software Engineering</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Spacer -->
+        <div class="h-24"></div>
 	</main>
 </Layout>

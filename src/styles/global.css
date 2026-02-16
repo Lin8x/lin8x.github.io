@@ -2,6 +2,104 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prose/Typography overrides for project markdown content */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  color: #ffffff !important;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #374151;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+}
+
+.prose p {
+  color: #d1d5db !important;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+}
+
+.prose strong {
+  color: #0dbb63 !important;
+  font-weight: 600;
+}
+
+.prose ul, .prose ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  color: #d1d5db;
+  margin: 0.5rem 0;
+  line-height: 1.75;
+}
+
+.prose ul > li {
+  list-style-type: disc;
+}
+
+.prose ol > li {
+  list-style-type: decimal;
+}
+
+.prose a {
+  color: #0dbb63;
+  text-decoration: none;
+}
+
+.prose a:hover {
+  text-decoration: underline;
+}
+
+.prose code {
+  color: #2D6CDF;
+  background-color: #1f2937;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  background-color: #111827;
+  border: 1px solid #374151;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.prose blockquote {
+  border-left: 4px solid #0dbb63;
+  background-color: rgba(17, 24, 39, 0.5);
+  padding: 0.5rem 1rem;
+  margin: 1.5rem 0;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.prose blockquote p {
+  color: #9ca3af !important;
+  font-style: italic;
+}
+
+.prose img {
+  border-radius: 0.75rem;
+  border: 1px solid #374151;
+  margin: 1.5rem 0;
+}
+
+.prose hr {
+  border-color: #374151;
+  margin: 2rem 0;
+}
+
 /* Body scroll lock for modals */
 body.overflow-hidden {
   overflow: hidden;

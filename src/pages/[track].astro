@@ -22,10 +22,10 @@ export async function getStaticPaths() {
 const { track } = Astro.params;
 const { title, desc } = Astro.props;
 
-import { skillMap, certMap, courseMap, degrees } from '../data/portfolio';
+import { getSkillsForTrack, getCertificationsForTrack, courseMap, degrees } from '../data/portfolio';
 
-const currentSkills = skillMap[track] || [];
-const currentCerts = certMap[track] || [];
+const currentSkills = getSkillsForTrack(track);
+const currentCerts = getCertificationsForTrack(track);
 const currentCourses = courseMap[track] || [];
 const trackCourses = currentCourses.map(c => c.name);
 const allDegrees = degrees;
@@ -73,8 +73,8 @@ const trackProjects = allProjects.filter((project) =>
     </header>
 
     {/* Education Section (Top of page) */}
-    <section class="min-h-[40vh] flex flex-col justify-center py-16 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
-      <div class="max-w-5xl mx-auto w-full">
+    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
+      <div class="max-w-6xl mx-auto w-full">
          <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
           <span class="text-brand-primary">///</span> University Education
          </h2>
@@ -125,33 +125,12 @@ const trackProjects = allProjects.filter((project) =>
       </div>
     </section>
 
-    {/* Skills Section */}
-    {currentSkills.length > 0 && (
-      <section class="min-h-[50vh] flex flex-col justify-center py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
-        <div class="max-w-5xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4">
-            <span class="text-brand-primary">///</span> Technical Arsenal
-            </h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {currentSkills.map(skill => (
-                <div class="flex flex-col items-center gap-4 group transition-all duration-500 hover:-translate-y-2">
-                <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-900/50 rounded-2xl flex items-center justify-center p-6 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition shadow-xl shadow-brand-primary/5">
-                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-500 opacity-70 group-hover:opacity-100" />
-                </div>
-                <span class="text-sm font-mono text-gray-500 group-hover:text-white transition uppercase tracking-wider">{skill.name}</span>
-                </div>
-            ))}
-            </div>
-        </div>
-      </section>
-    )}
-
     {/* Certifications & Coursework Section */}
     {currentCerts.length > 0 && (
-      <section class="min-h-[40vh] flex flex-col justify-center py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.3s;">
+      <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
          <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4">
-            <span class="text-brand-secondary">///</span> Certifications & Coursework
+            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
+            <span class="text-brand-primary">///</span> Certifications & Coursework
             </h2>
             
             {/* Logic to split Official Certs vs Udemy Courses */}
@@ -166,35 +145,46 @@ const trackProjects = allProjects.filter((project) =>
                             <div class="mb-12">
                                 <h3 class="text-xl font-bold text-gray-400 mb-6 uppercase tracking-wider">Official Certifications</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {officialCerts.map(cert => (
-                                        <div class="relative bg-gray-900/50 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-brand-primary/50 transition duration-300 group">
-                                            <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 group-hover:scale-110 transition">
-                                                <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" onError="this.style.display='none'" />
-                                            </div>
-                                            <div>
-                                                <div class="flex items-center gap-2 mb-1">
-                                                    <h3 class="text-xl font-bold text-white leading-tight">{cert.name}</h3>
+                                    {officialCerts.map(cert => {
+                                        const CardWrapper = cert.url ? 'a' : 'div';
+                                        const linkProps = cert.url ? { href: cert.url, target: '_blank', rel: 'noopener noreferrer' } : {};
+                                        return (
+                                            <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/50 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-brand-primary/50 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
+                                                <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 group-hover:scale-110 transition">
+                                                    <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" onError="this.style.display='none'" />
                                                 </div>
-                                                <p class="text-sm text-gray-400 mb-2">{cert.provider}</p>
-                                                
-                                                <div class="flex gap-2">
-                                                    <span class="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full border border-purple-500/20">
-                                                        OFFICIAL CERT
-                                                    </span>
-                                                    {cert.status === 'in-progress' && (
-                                                        <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
-                                                        IN PROGRESS
-                                                        </span>
+                                                <div>
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <h3 class={`text-xl font-bold leading-tight ${cert.url ? 'text-white group-hover:text-brand-primary transition' : 'text-white'}`}>{cert.name}</h3>
+                                                        {cert.url && (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 group-hover:text-brand-primary transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                    <p class="text-sm text-gray-400 mb-1">{cert.provider}</p>
+                                                    {cert.credentialId && (
+                                                        <p class="text-xs text-gray-600 font-mono mb-2">ID: {cert.credentialId}</p>
                                                     )}
-                                                    {cert.status === 'completed' && (
-                                                        <span class="inline-block px-3 py-1 bg-green-500/10 text-green-500 text-xs font-bold rounded-full border border-green-500/20">
-                                                        VERIFIED
+                                                    
+                                                    <div class="flex gap-2">
+                                                        <span class="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full border border-purple-500/20">
+                                                            OFFICIAL CERT
                                                         </span>
-                                                    )}
+                                                        {cert.status === 'completed' ? (
+                                                            <span class="inline-block px-3 py-1 bg-green-500/10 text-green-500 text-xs font-bold rounded-full border border-green-500/20">
+                                                            VERIFIED
+                                                            </span>
+                                                        ) : (
+                                                            <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
+                                                            IN PROGRESS
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    ))}
+                                            </a>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         )}
@@ -212,13 +202,18 @@ const trackProjects = allProjects.filter((project) =>
                                 <h3 class="text-xl font-bold text-gray-400 mb-6 uppercase tracking-wider">Independent Coursework</h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {courseWork.map(cert => (
-                                        <div class="relative bg-gray-900/30 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-blue-500/30 transition duration-300 group">
+                                        <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/30 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-blue-500/30 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
                                             <div class="w-16 h-16 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 grayscale group-hover:grayscale-0 transition">
                                                 <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" onError="this.style.display='none'" />
                                             </div>
                                             <div>
                                                 <div class="flex items-center gap-2 mb-1">
-                                                    <h3 class="text-lg font-bold text-gray-200 leading-tight">{cert.name}</h3>
+                                                    <h3 class={`text-lg font-bold leading-tight ${cert.url ? 'text-gray-200 group-hover:text-blue-400 transition' : 'text-gray-200'}`}>{cert.name}</h3>
+                                                    {cert.url && (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                    )}
                                                 </div>
                                                 <p class="text-sm text-gray-500 mb-2">{cert.provider}</p>
                                                 
@@ -226,14 +221,18 @@ const trackProjects = allProjects.filter((project) =>
                                                     <span class="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20">
                                                         COURSEWORK
                                                     </span>
-                                                    {cert.status === 'completed' && (
+                                                    {cert.status === 'completed' ? (
                                                         <span class="inline-block px-3 py-1 bg-green-500/5 text-green-500/80 text-xs font-bold rounded-full border border-green-500/10">
                                                         COMPLETED
+                                                        </span>
+                                                    ) : (
+                                                        <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
+                                                        IN PROGRESS
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     ))}
                                 </div>
                             </div>
@@ -245,13 +244,34 @@ const trackProjects = allProjects.filter((project) =>
       </section>
     )}
 
+    {/* Skills Section */}
+    {currentSkills.length > 0 && (
+      <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.3s;">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
+            <span class="text-brand-primary">///</span> Technical Arsenal
+            </h2>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 md:gap-6">
+            {currentSkills.map(skill => (
+                <div class="flex flex-col items-center gap-2 group transition-all duration-300 hover:-translate-y-1">
+                <div class="w-14 h-14 md:w-16 md:h-16 bg-gray-900/50 rounded-xl flex items-center justify-center p-3 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition">
+                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-300 opacity-70 group-hover:opacity-100" />
+                </div>
+                <span class="text-xs font-mono text-gray-500 group-hover:text-white transition text-center leading-tight">{skill.name}</span>
+                </div>
+            ))}
+            </div>
+        </div>
+      </section>
+    )}
+
     {/* Projects Section - Spacious Grid */}
-    <section class="min-h-screen py-32 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
-        <div class="max-w-7xl mx-auto">
-                        <h2 class="text-3xl font-bold text-white mb-16 flex items-center gap-4 justify-center">
-                            <span class="text-brand-secondary">///</span> Executed Projects
-                        </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.4s;">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
+                <span class="text-brand-primary">///</span> Executed Projects
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trackProjects.map(async (project) => {
                 const html = await marked.parse(project.body);
                 
@@ -280,10 +300,16 @@ const trackProjects = allProjects.filter((project) =>
     </section>
 
     {/* Gamification: Quiz (BOTTOM) */}
-    <div class="py-32 animate-fade-in-up flex flex-col items-center border-t border-gray-900" style="animation-delay: 0.6s;">
-      <h3 class="text-white text-2xl font-bold mb-8">Test Your Knowledge</h3>
-      <TrackQuiz client:visible track={track} />
-    </div>
+    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
+      <div class="max-w-6xl mx-auto w-full">
+        <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
+          <span class="text-brand-primary">///</span> Test Your Knowledge
+        </h2>
+        <div class="flex justify-center">
+              <TrackQuiz client:visible track={track} />
+        </div>
+      </div>
+    </section>
 
   </div>
 </Layout>

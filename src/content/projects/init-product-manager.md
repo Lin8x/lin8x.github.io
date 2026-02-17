@@ -1,21 +1,20 @@
 ---
-title: "Lead Product Manager - Mech Fighter Game"
-description: "Directed a 20-person cross-functional team in developing a 3D robot mech fighter game using Unity & C#."
-date: "Jan 2023 - May 2024"
-tags: ["Unity", "C#", "Project Management", "GitHub", "Trello"]
+title: "University Tech Club - Product Manager & Director"
+description: "Directed teams of 10-20 developers across multiple game releases, showcased at major events. Managed cross-department coordination using Trello and industry tools."
+date: "Oct 2022 - Present"
+tags: ["Unity", "C#", "Project Management", "GitHub", "Trello", "Blender", "Visual Studio"]
 tracks: ["gamedev", "software-engineer"]
 image: "/images/projects/initbuild2023.jpeg"
 featured: true
 ---
 
 ## Overview
-Led a large-scale student development team to success in a competitive 9-week build program.
+Served as Product Manager and Director for multiple game development cycles, leading cross-functional teams to successfully ship games within aggressive timelines.
 
 ## Key Achievements
-- **Leadership:** Directed a 20-person cross-functional team in developing a robot mech fighter game, achieving all project milestones within the 9-week program.
-
-- **Strategy:** Collaborated with two additional managers to ensure strategic alignment, streamline workflows, and foster team collaboration.
-
-- **Development:** Spearheaded game development using Unity 2021 and C#, leading efforts in crafting engaging mechanics, intuitive UI, and polished graphics.
-
-- **Process:** Optimized version control and team efficiency by integrating GitHub for code management and collaborative development.
+- **Team Leadership:** Acted as one of three key product managers, guiding a dynamic team of 20 to successfully develop and release a game within a challenging 2-month window.
+- **Event Showcase:** Played a pivotal role in development for a prominent university build event, showcasing team capabilities on a large stage.
+- **Coordination:** Strategically scheduled and coordinated meetings using Trello across three departments, ensuring clear communication and synchronization among department leads.
+- **Tool Integration:** Seamlessly integrated and managed core development tools such as Unity, GitHub, Blender, and Visual Studio, facilitating smooth project progression.
+- **Scaling:** Also spearheaded a dedicated team of 10, driving successful development and shipment of a game within an aggressive 2-month timeframe.
+- **Process:** Instituted Trello across departments, ensuring streamlined workflows and fostering seamless communication between leads.

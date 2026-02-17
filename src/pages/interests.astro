@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PersonalModules from '../components/PersonalModules';
+---
+
+<Layout title="Interests | Daniel Jalali">
+	<main class="container mx-auto px-4 py-32 flex flex-col items-center justify-center min-h-screen relative z-10">
+		
+        <!-- Back Button -->
+        <div class="w-full max-w-6xl mb-8">
+            <a href="/" class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition group">
+                <span class="transform group-hover:-translate-x-1 transition">←</span>
+                <span>Back to Home</span>
+            </a>
+        </div>
+
+        <!-- Full PersonalModules Component -->
+        <PersonalModules client:visible />
+
+        <!-- Bottom CTA -->
+        <section class="w-full flex flex-col justify-center items-center max-w-4xl py-16">
+            <div class="text-center">
+                <p class="text-gray-500 mb-6">
+                    Always happy to chat about any of these — especially if you have game recommendations! 🎯
+                </p>
+                <a 
+                    href="/" 
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-brand-primary text-black font-bold rounded-xl hover:bg-brand-primary/90 transition-all duration-300"
+                >
+                    <span>Back to Portfolio</span>
+                </a>
+            </div>
+        </section>
+	</main>
+</Layout>

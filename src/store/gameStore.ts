@@ -25,43 +25,85 @@ export type Notification = {
   id: string;
   title: string;
   message: string;
-  type: 'success' | 'info' | 'unlock';
+  type: 'success' | 'info' | 'unlock' | 'error';
 };
 
 export const notifications = atom<Notification[]>([]);
+
+// Reusable notification helper
+export const addNotification = (
+  title: string, 
+  message: string, 
+  type: 'success' | 'info' | 'unlock' | 'error' = 'info',
+  duration: number = 3000
+) => {
+  const id = Math.random().toString(36).substring(2, 9);
+  const newNotif: Notification = { id, title, message, type };
+  notifications.set([...notifications.get(), newNotif]);
+
+  if (duration > 0) {
+    setTimeout(() => {
+      notifications.set(notifications.get().filter(n => n.id !== id));
+    }, duration);
+  }
+
+  return id; // Return id in case caller wants to dismiss early
+};
+
+// Dismiss a specific notification
+export const dismissNotification = (id: string) => {
+  notifications.set(notifications.get().filter(n => n.id !== id));
+};
 
 export const addPoints = (amount: number, reason: string) => {
   const current = parseInt(gameStore.get().points);
   const newVal = current + amount;
   gameStore.setKey('points', newVal.toString());
 
-  // Trigger notification
-  const id = Math.random().toString(36).substr(2, 9);
-  const newNotif: Notification = {
-    id,
-    title: `+${amount} XP`,
-    message: reason || 'Points acquired',
-    type: 'success'
-  };
-  
-  notifications.set([...notifications.get(), newNotif]);
-
-  // Auto-dismiss
-  setTimeout(() => {
-    notifications.set(notifications.get().filter(n => n.id !== id));
-  }, 3000);
+  addNotification(`+${amount} XP`, reason || 'Points acquired', 'success');
 };
 
 export const resetGame = () => {
-    gameStore.set({
-        points: '0',
-        secretsFound: '[]',
-        unlockedItems: '[]',
-        activeItems: '[]',
-        theme: 'default',
-        gameEnabled: 'true'
-    });
-    window.location.reload();
+    addNotification('System Reset', 'All progress has been wiped. Starting fresh...', 'error', 2000);
+    
+    setTimeout(() => {
+        gameStore.set({
+            points: '0',
+            secretsFound: '[]',
+            unlockedItems: '[]',
+            activeItems: '[]',
+            theme: 'default',
+            gameEnabled: 'true'
+        });
+        window.location.reload();
+    }, 1500);
+};
+
+// Secret/Achievement tracking
+export const findSecret = (secretId: string, points: number = 100) => {
+    const secrets = JSON.parse(gameStore.get().secretsFound || '[]') as string[];
+    
+    if (secrets.includes(secretId)) {
+        return false; // Already found
+    }
+    
+    // Add to found secrets
+    const newSecrets = [...secrets, secretId];
+    gameStore.setKey('secretsFound', JSON.stringify(newSecrets));
+    
+    // Award points
+    const current = parseInt(gameStore.get().points);
+    gameStore.setKey('points', (current + points).toString());
+    
+    // Show achievement notification
+    addNotification('🎉 Secret Found!', `+${points} XP earned`, 'unlock', 4000);
+    
+    return true;
+};
+
+export const hasFoundSecret = (secretId: string): boolean => {
+    const secrets = JSON.parse(gameStore.get().secretsFound || '[]') as string[];
+    return secrets.includes(secretId);
 };
 
 export const toggleItem = (itemId: string) => {
@@ -89,7 +131,8 @@ export type ShopItem = {
 export const SHOP_ITEMS: ShopItem[] = [
     { id: 'miku_companion', name: 'Miku Companion', cost: 100, description: 'A digital assistant that follows your cursor.' },
     { id: 'theme_matrix', name: 'Matrix Mode', cost: 1000, description: 'Visual Override: Green rain aesthetic.' },
-    { id: 'resume_full', name: 'Full Resume Access', cost: 50, description: 'Unlock the detailed PDF version of my CV.' },
+    { id: 'theme_minecraft', name: 'Minecraft Theme', cost: 500, description: 'Blocky pixel aesthetic. Overrides Matrix Mode.' },
+    { id: 'theme_rainbow', name: 'Rainbow Mode', cost: 2500, description: 'Ultimate visual override. Animated rainbow background.' },
     { id: 'pet_miku_dance', name: 'Miku Dance Protocol', cost: 2000, description: 'Enable "Party Mode" for the companion.' },
 ];
 
@@ -116,30 +159,10 @@ export const buyItem = (itemId: string) => {
             gameStore.setKey('activeItems', JSON.stringify([...active, itemId]));
         }
 
-        // Notify
-        const id = Math.random().toString(36).substr(2, 9);
-        const newNotif: Notification = {
-            id,
-            title: `Purchased & Equipped`,
-            message: `${item.name} is now active`,
-            type: 'unlock'
-        };
-        notifications.set([...notifications.get(), newNotif]);
-        setTimeout(() => {
-            notifications.set(notifications.get().filter(n => n.id !== id));
-        }, 3000);
+        // Notify success
+        addNotification('Purchased & Equipped', `${item.name} is now active`, 'unlock');
     } else {
-         // Notify Fail
-         const id = Math.random().toString(36).substr(2, 9);
-         const newNotif: Notification = {
-             id,
-             title: `Insufficient Funds`,
-             message: `Need ${item.cost} XP`,
-             type: 'info'
-         };
-         notifications.set([...notifications.get(), newNotif]);
-         setTimeout(() => {
-             notifications.set(notifications.get().filter(n => n.id !== id));
-         }, 3000);
+        // Notify insufficient funds
+        addNotification('Insufficient Funds', `Need ${item.cost} XP`, 'error');
     }
 };

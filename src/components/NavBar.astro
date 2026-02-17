@@ -1,12 +1,12 @@
 ---
-import { trackConfig } from '../data/portfolio';
+import ResumeGenerator from './ResumeGenerator';
 
 interface Props {
   track?: string;
 }
 
 const { track } = Astro.props;
-const currentResume = track && trackConfig[track] ? trackConfig[track].resume : '/resumes/Daniel_Jalali_Resume_Data.pdf';
+const currentTrack = track || 'software-engineer';
 
 const tracks = [
   { name: 'Cloud Engineer', path: '/cloud' },
@@ -50,10 +50,7 @@ const tracks = [
         <span>Shop</span>
       </button>
 
-      <a href={currentResume} target="_blank" class="hover:text-white transition group flex items-center gap-1">
-        Resume
-        {track && <span class="text-xs bg-gray-800 px-1.5 py-0.5 rounded text-gray-400 group-hover:text-brand-primary border border-gray-700">{track.toUpperCase()}</span>}
-      </a>
+      <ResumeGenerator client:load track={currentTrack} variant="dropdown" />
       
       <button id="nav-contact-btn" class="px-4 py-2 bg-brand-primary text-black font-bold border border-brand-primary rounded-lg hover:bg-white hover:border-white transition transform hover:-translate-y-0.5 shadow-lg shadow-brand-primary/20">
         Contact
@@ -79,7 +76,9 @@ const tracks = [
           ))}
       </div>
 
-      <a href={currentResume} target="_blank" class="block py-2 px-4 hover:bg-gray-800 rounded">Resume</a>
+      <div class="py-2 px-4">
+        <ResumeGenerator client:load track={currentTrack} variant="button" className="w-full justify-center px-4 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-700 transition flex items-center gap-2" />
+      </div>
       <button id="mobile-shop-btn" class="w-full text-left py-2 px-4 hover:bg-gray-800 rounded flex items-center gap-2">
          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
          Shop

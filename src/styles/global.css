@@ -117,6 +117,14 @@ body.overflow-hidden {
   .animate-slide-in-top {
     animation: slideInTop 0.5s ease-out forwards;
   }
+
+  .animate-toast-in {
+    animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-toast-progress {
+    animation: toastProgress 3s linear forwards;
+  }
 }
 
 @keyframes fadeInUp {
@@ -150,6 +158,39 @@ body.overflow-hidden {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
 }
 
 /* Custom Scrollbar */
@@ -245,5 +286,127 @@ body.theme-matrix * {
 body.theme-matrix h1, body.theme-matrix h2, body.theme-matrix h3 {
 }
 body.theme-matrix p {
+}
+
+/* Minecraft Theme */
+@keyframes minecraftDirt {
+  0% { background-position: 0 0; }
+  100% { background-position: 64px 64px; }
+}
+
+.theme-minecraft {
+  --brand-primary: #5D8731;
+  background-color: #3C2415 !important;
+  background-image: 
+    linear-gradient(45deg, #4A3324 25%, transparent 25%),
+    linear-gradient(-45deg, #4A3324 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #4A3324 75%),
+    linear-gradient(-45deg, transparent 75%, #4A3324 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+  image-rendering: pixelated;
+  font-family: 'Press Start 2P', cursive;
+}
+
+body.theme-minecraft,
+body.theme-minecraft * {
+  font-family: 'Press Start 2P', cursive !important;
+}
+
+body.theme-minecraft p,
+body.theme-minecraft span,
+body.theme-minecraft a,
+body.theme-minecraft li,
+body.theme-minecraft label,
+body.theme-minecraft input,
+body.theme-minecraft button {
+  font-size: 0.75rem;
+  line-height: 1.8;
+}
+
+body.theme-minecraft .card, 
+body.theme-minecraft .bg-gray-900,
+body.theme-minecraft .bg-gray-800 {
+  background-color: #2D5016 !important;
+  border: 3px solid #1A3009 !important;
+  box-shadow: 
+    inset 2px 2px 0 #5D8731,
+    inset -2px -2px 0 #1A3009,
+    4px 4px 0 #000 !important;
+  border-radius: 0 !important;
+}
+
+body.theme-minecraft h1, 
+body.theme-minecraft h2, 
+body.theme-minecraft h3 {
+  color: #FFD700 !important;
+  text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+  letter-spacing: 1px;
+}
+
+body.theme-minecraft p,
+body.theme-minecraft span {
+  text-shadow: 1px 1px 0 #000;
+}
+
+body.theme-minecraft button {
+  border-radius: 0 !important;
+  border: 2px solid #000 !important;
+  box-shadow: 2px 2px 0 #000;
+}
+
+body.theme-minecraft button:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #000;
+}
+
+/* Rainbow Theme - Ultimate Override */
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes rainbowText {
+  0% { color: #ff0000; }
+  17% { color: #ff8800; }
+  33% { color: #ffff00; }
+  50% { color: #00ff00; }
+  67% { color: #0088ff; }
+  83% { color: #8800ff; }
+  100% { color: #ff0000; }
+}
+
+.theme-rainbow {
+  background: linear-gradient(-45deg, 
+    #ff0000, #ff8800, #ffff00, #00ff00, 
+    #00ffff, #0088ff, #8800ff, #ff00ff, #ff0000) !important;
+  background-size: 400% 400% !important;
+  animation: rainbowShift 8s ease infinite !important;
+}
+
+body.theme-rainbow .card, 
+body.theme-rainbow .bg-gray-900,
+body.theme-rainbow .bg-gray-800 {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-rainbow h1, 
+body.theme-rainbow h2 {
+  animation: rainbowText 3s linear infinite;
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+body.theme-rainbow .text-brand-primary,
+body.theme-rainbow [class*="text-brand"] {
+  animation: rainbowText 3s linear infinite;
+}
+
+body.theme-rainbow .bg-brand-primary {
+  background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #00ffff, #0088ff, #8800ff) !important;
+  background-size: 200% 100%;
+  animation: rainbowShift 2s linear infinite;
 }
 

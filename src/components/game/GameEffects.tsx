@@ -8,11 +8,16 @@ export default function GameEffects() {
     useEffect(() => {
         const active = JSON.parse($gameStore.activeItems || '[]') as string[];
         
-        // Matrix Mode
-        if (active.includes('theme_matrix')) {
+        // Clear all theme classes first
+        document.body.classList.remove('theme-matrix', 'theme-minecraft', 'theme-rainbow');
+        
+        // Apply themes with priority: Rainbow > Minecraft > Matrix
+        if (active.includes('theme_rainbow')) {
+            document.body.classList.add('theme-rainbow');
+        } else if (active.includes('theme_minecraft')) {
+            document.body.classList.add('theme-minecraft');
+        } else if (active.includes('theme_matrix')) {
             document.body.classList.add('theme-matrix');
-        } else {
-            document.body.classList.remove('theme-matrix');
         }
 
         // Future effects (e.g. Cursor trails) can go here

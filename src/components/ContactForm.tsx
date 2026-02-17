@@ -77,7 +77,7 @@ export default function ContactForm() {
                     <X size={24} />
                 </button>
 
-                <h2 className="text-2xl font-bold text-white mb-2">Initialize Connection</h2>
+                <h2 className="text-2xl font-bold text-white mb-2">Get in Touch</h2>
                 <p className="text-gray-400 mb-6 text-sm">Send a transmission to Daniel Jalali.</p>
 
                 {status === 'success' ? (

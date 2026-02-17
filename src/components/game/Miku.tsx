@@ -2,6 +2,29 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useStore } from '@nanostores/react';
 import { gameStore } from '../../store/gameStore';
 
+// Frame definitions for each animation state
+const MIKU_FRAMES = {
+  idle: [
+    '/images/secrets/miku/miku-idle-1.png',
+    '/images/secrets/miku/miku-idle-2.png',
+  ],
+  run: [
+    '/images/secrets/miku/miku-run-1.png',
+    '/images/secrets/miku/miku-run-2.png',
+  ],
+  dance: [
+    '/images/secrets/miku/miku-dance-1.png',
+    '/images/secrets/miku/miku-dance-2.png',
+    '/images/secrets/miku/miku-dance-3.png',
+  ],
+};
+
+const FRAME_DURATIONS = {
+  idle: 500,   // Slow breathing animation
+  run: 150,    // Fast running
+  dance: 200,  // Medium dance pace
+};
+
 export default function Miku() {
   const state = useStore(gameStore);
   
@@ -10,6 +33,7 @@ export default function Miku() {
   const unlocked = JSON.parse(state.unlockedItems || '[]') as string[];
   const hasMiku = unlocked.includes('miku_companion');
   const hasDance = unlocked.includes('pet_miku_dance');
+  const isDanceActive = activeItems.includes('pet_miku_dance') && hasDance;
 
   if (!activeItems.includes('miku_companion') || !hasMiku || state.gameEnabled !== 'true') {
       return null;
@@ -17,42 +41,24 @@ export default function Miku() {
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [mikuState, setMikuState] = useState<'idle' | 'run' | 'shock' | 'dance'>('idle');
+  const [mikuState, setMikuState] = useState<'idle' | 'run' | 'dance'>('idle');
   const [flip, setFlip] = useState(false);
+  const [frameIndex, setFrameIndex] = useState(0);
   
   const idleTimer = useRef<number | null>(null);
-  const lastActiveTime = useRef(Date.now());
-  const isMovedRecently = useRef(false);
 
   // Constants
   const DELAY = 0.05; // 0.05 = Laggy follow, 1 = instant
-  const SHOCK_THRESHOLD = 5000; // 5 seconds of idle triggers shock
   
   // Update mouse target
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
       
-      const now = Date.now();
-      const timeSinceLastMove = now - lastActiveTime.current;
-
-      // Logic: If idle too long -> Shock. If moving -> Run. If Dance Protocol owned -> Random chance to dance?
-      // Actually, let's keep it simple for now to avoid complexity bugs
-      if (timeSinceLastMove > SHOCK_THRESHOLD) {
-          setMikuState('shock');
-          // If dance protocol purchased, maybe she dances instead of shock sometimes?
-          if (hasDance && Math.random() > 0.5) {
-               setMikuState('dance');
-          } else {
-               // Default Shock behavior
-               setTimeout(() => setMikuState('run'), 1000); 
-          }
-      } else if (mikuState !== 'shock' && mikuState !== 'dance') {
+      // Set to running when mouse moves
+      if (mikuState !== 'dance') {
           setMikuState('run');
       }
-
-      lastActiveTime.current = now;
-      isMovedRecently.current = true;
       
       // Face direction
       if (e.clientX < position.x) setFlip(true);
@@ -67,7 +73,7 @@ export default function Miku() {
 
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [position.x, mikuState, hasDance]);
+  }, [position.x, mikuState]);
 
   // Animation Loop (Lerp)
   useEffect(() => {
@@ -93,16 +99,29 @@ export default function Miku() {
     return () => cancelAnimationFrame(animationFrameId);
   }, [mousePos]);
 
+  // Frame animation loop
+  useEffect(() => {
+    // When dance mode is active, replace idle with dance animation
+    const effectiveState = (isDanceActive && mikuState === 'idle') ? 'dance' : mikuState;
+    const frames = MIKU_FRAMES[effectiveState];
+    const duration = FRAME_DURATIONS[effectiveState];
+    
+    const interval = setInterval(() => {
+      setFrameIndex(prev => (prev + 1) % frames.length);
+    }, duration);
+    
+    // Reset frame index when state changes
+    setFrameIndex(0);
+    
+    return () => clearInterval(interval);
+  }, [mikuState, isDanceActive]);
 
-
-  // Placeholder images - The user has been instructed to upload these
-  const getImage = () => {
-      switch(mikuState) {
-          case 'shock': return '/images/miku-shock.png';
-          case 'dance': return '/images/miku-run.gif'; // Fallback to run for dance
-          case 'run': return '/images/miku-run.gif'; // Or png if gif not avail
-          default: return '/images/miku-idle.gif';
-      }
+  // Get current frame image
+  const getCurrentFrame = () => {
+    // When dance mode is active, replace idle with dance animation
+    const effectiveState = (isDanceActive && mikuState === 'idle') ? 'dance' : mikuState;
+    const frames = MIKU_FRAMES[effectiveState];
+    return frames[frameIndex % frames.length];
   };
 
   return (
@@ -114,11 +133,12 @@ export default function Miku() {
             transform: `translate(${position.x}px, ${position.y}px) scaleX(${flip ? -1 : 1})` 
         }}
     >
-        {/* If image fails, show a cute fallback div */}
+        {/* Animated Miku sprite */}
         <img 
-            src={getImage()} 
+            src={getCurrentFrame()} 
             alt="Miku"
             className="w-full h-full object-contain"
+            style={{ imageRendering: 'pixelated' }}
             onError={(e) => {
                 e.currentTarget.style.display = 'none';
                 e.currentTarget.parentElement!.innerHTML = '<div class="w-8 h-8 bg-pink-500/50 rounded-full blur-md animate-pulse"></div>';

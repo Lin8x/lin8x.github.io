@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from '../components/ProjectCard';
 import TrackQuiz from '../components/game/Quiz';
+import SecretEasterEgg from '../components/game/SecretEasterEgg';
 import { marked } from 'marked'; 
 
 export async function getStaticPaths() {
@@ -67,7 +68,6 @@ const trackProjects = allProjects.filter((project) =>
       </p>
       
       <div class="mt-24 animate-bounce flex flex-col items-center gap-2 opacity-50">
-        <span class="text-[10px] uppercase tracking-widest text-gray-500">Initialize</span>
         <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
       </div>
     </header>
@@ -75,8 +75,8 @@ const trackProjects = allProjects.filter((project) =>
     {/* Education Section (Top of page) */}
     <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
       <div class="max-w-6xl mx-auto w-full">
-         <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
-          <span class="text-brand-primary">///</span> University Education
+         <h2 class="text-3xl font-bold text-white mb-12">
+          Education
          </h2>
          <div class="grid grid-cols-1 gap-8">
             {allDegrees.map(degree => (
@@ -129,8 +129,8 @@ const trackProjects = allProjects.filter((project) =>
     {currentCerts.length > 0 && (
       <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
          <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
-            <span class="text-brand-primary">///</span> Certifications & Coursework
+            <h2 class="text-3xl font-bold text-white mb-12">
+            Certifications & Coursework
             </h2>
             
             {/* Logic to split Official Certs vs Udemy Courses */}
@@ -151,7 +151,7 @@ const trackProjects = allProjects.filter((project) =>
                                         return (
                                             <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/50 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-brand-primary/50 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
                                                 <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 group-hover:scale-110 transition">
-                                                    <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" onError="this.style.display='none'" />
+                                                    <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
                                                 </div>
                                                 <div>
                                                     <div class="flex items-center gap-2 mb-1">
@@ -204,7 +204,7 @@ const trackProjects = allProjects.filter((project) =>
                                     {courseWork.map(cert => (
                                         <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/30 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-blue-500/30 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
                                             <div class="w-16 h-16 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 grayscale group-hover:grayscale-0 transition">
-                                                <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" onError="this.style.display='none'" />
+                                                <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
                                             </div>
                                             <div>
                                                 <div class="flex items-center gap-2 mb-1">
@@ -248,8 +248,8 @@ const trackProjects = allProjects.filter((project) =>
     {currentSkills.length > 0 && (
       <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.3s;">
         <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
-            <span class="text-brand-primary">///</span> Technical Arsenal
+            <h2 class="text-3xl font-bold text-white mb-12">
+            Skills
             </h2>
             <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 md:gap-6">
             {currentSkills.map(skill => (
@@ -268,8 +268,8 @@ const trackProjects = allProjects.filter((project) =>
     {/* Projects Section - Spacious Grid */}
     <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.4s;">
         <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
-                <span class="text-brand-primary">///</span> Executed Projects
+            <h2 class="text-3xl font-bold text-white mb-12">
+                Projects
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {trackProjects.map(async (project) => {
@@ -302,8 +302,8 @@ const trackProjects = allProjects.filter((project) =>
     {/* Gamification: Quiz (BOTTOM) */}
     <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
       <div class="max-w-6xl mx-auto w-full">
-        <h2 class="text-3xl font-bold text-white mb-12 flex items-center gap-4">
-          <span class="text-brand-primary">///</span> Test Your Knowledge
+        <h2 class="text-3xl font-bold text-white mb-12">
+          Quiz
         </h2>
         <div class="flex justify-center">
               <TrackQuiz client:visible track={track} />
@@ -312,4 +312,15 @@ const trackProjects = allProjects.filter((project) =>
     </section>
 
   </div>
+  
+  {/* Secret Easter Egg - Only on Gamedev track */}
+  {track === 'gamedev' && (
+    <SecretEasterEgg 
+      client:load
+      secretId="aqua_dance" 
+      imageSrc="/images/secrets/aqua-dance.gif"
+      points={100}
+      position="bottom-left"
+    />
+  )}
 </Layout>

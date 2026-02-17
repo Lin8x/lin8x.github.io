@@ -16,17 +16,6 @@ export interface Certification {
     tags: string[]; // Which tracks this cert appears on (e.g., ['cloud', 'dataengineer'])
 }
 
-export interface TrackConfig {
-    resume: string;
-}
-
-export const trackConfig: Record<string, TrackConfig> = {
-    'cloud': { resume: '/resumes/Daniel_Jalali_Resume_Cloud.pdf' },
-    'dataengineer': { resume: '/resumes/Daniel_Jalali_Resume_Data.pdf' },
-    'gamedev': { resume: '/resumes/Daniel_Jalali_Resume_GameDev.pdf' },
-    'software-engineer': { resume: '/resumes/Daniel_Jalali_Resume_SWE.pdf' },
-};
-
 export interface Course {
     name: string;
     university?: string;
@@ -282,7 +271,7 @@ export const courseMap: Record<string, Course[]> = {
 export const degrees: Degree[] = [
     {
         title: "B.A. in Computer Science",
-        institution: "Florida International University",
+        institution: "University",
         year: "2023",
         relevantCourses: [
             "Intro to Computing",
@@ -313,7 +302,7 @@ export const degrees: Degree[] = [
     },
     {
         title: "Certificate in Big Data, AI, & Ethics",
-        institution: "Florida International University",
+        institution: "University",
         year: "2023",
         relevantCourses: [
             "PHI 2100 Introduction to Logic",

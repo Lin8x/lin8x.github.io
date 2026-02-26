@@ -9,13 +9,13 @@ import projectsModule from '../src/data/resumeProjects.ts';
 import personalModule from '../src/data/personal.ts';
 import resumeDocModule from '../src/components/resume/ResumeDocument.tsx';
 
-const { TRACKS_BY_KEY } = tracksModule;
+const { TRACKS_BY_KEY, resolveTrackContentKey, PROFESSIONAL_TRACK_KEYS } = tracksModule;
 const { getSkillsForTrack, getCertificationsForTrack, courseMap, degrees } = portfolioModule;
 const { getProjectsForTrack } = projectsModule;
 const { contactInfo, professionalSummaries, getExperienceForTrack } = personalModule;
 const { ResumeDocument } = resumeDocModule;
 
-const TRACKS = ['cloud', 'dataengineer', 'gamedev', 'software-engineer'];
+const TRACKS = [...PROFESSIONAL_TRACK_KEYS];
 
 function usageAndExit() {
   console.error('Usage: npm run resume:private -- [track]');
@@ -243,10 +243,11 @@ function applyExperienceOverrides(items, overrides) {
 }
 
 function buildPublicResumeData(track) {
+  const contentTrack = resolveTrackContentKey(track);
   return {
     track,
-    skills: getSkillsForTrack(track).map((s) => ({ name: s.name })),
-    certifications: getCertificationsForTrack(track)
+    skills: getSkillsForTrack(contentTrack).map((s) => ({ name: s.name })),
+    certifications: getCertificationsForTrack(contentTrack)
       .filter((c) => c.type === 'certification')
       .map((c) => ({
         name: c.name,
@@ -254,7 +255,7 @@ function buildPublicResumeData(track) {
         status: c.status,
         type: c.type,
       })),
-    projects: getProjectsForTrack(track).map((p) => ({
+    projects: getProjectsForTrack(contentTrack).map((p) => ({
       title: p.title,
       description: p.description,
       date: p.date,
@@ -266,8 +267,8 @@ function buildPublicResumeData(track) {
       year: d.year,
       relevantCourses: d.relevantCourses,
     })),
-    courses: asArray(courseMap[track]).map((c) => ({ name: c.name })),
-    experience: getExperienceForTrack(track).map((e) => ({
+    courses: asArray(courseMap[contentTrack]).map((c) => ({ name: c.name })),
+    experience: getExperienceForTrack(contentTrack).map((e) => ({
       title: e.title,
       company: '',
       organizationType: e.organizationType || '',
@@ -276,7 +277,7 @@ function buildPublicResumeData(track) {
       bullets: e.bullets,
     })),
     contactInfo,
-    summary: professionalSummaries[track] || professionalSummaries['software-engineer'] || '',
+    summary: professionalSummaries[contentTrack] || professionalSummaries['software-engineer'] || '',
     title: TRACKS_BY_KEY[track]?.name || track,
   };
 }

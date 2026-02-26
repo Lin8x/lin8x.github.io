@@ -6,12 +6,16 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro check && astro build",
+    "build": "npm run domain:cname && astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "domain:cname": "node scripts/ensure-cname.mjs",
+    "domain:cloudflare:init": "node scripts/init-cloudflare-sync-config.mjs",
+    "domain:cloudflare:plan": "node --import tsx scripts/sync-cloudflare-routes.mjs",
+    "domain:cloudflare:apply": "node --import tsx scripts/sync-cloudflare-routes.mjs --apply",
     "resume:private:scaffold": "node --import tsx scripts/scaffold-private-resume.mjs",
     "resume:private": "node --import tsx scripts/generate-private-resume.mjs",
-    "resume:private:init": "node scripts/init-private-resume-template.mjs"
+    "resume:private:init": "node --import tsx scripts/init-private-resume-template.mjs"
   },
   "keywords": [],
   "author": "",

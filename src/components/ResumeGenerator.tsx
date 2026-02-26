@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { FileDown, Loader2, ChevronDown } from 'lucide-react';
-import { PROFESSIONAL_TRACKS } from '../data/tracks';
+import { PROFESSIONAL_TRACKS, resolveTrackContentKey, type TrackKey } from '../data/tracks';
 import { ResumeDocument, type ResumeData, trackNames } from './resume/ResumeDocument';
 
 // Main Component with Download Button
@@ -35,15 +35,16 @@ function ResumeDownloadLink({
       import('../data/resumeProjects'),
       import('../data/personal'),
     ]).then(([portfolio, projectsModule, personalModule]) => {
-      const skills = portfolio.getSkillsForTrack(trackKey);
-      const certifications = portfolio.getCertificationsForTrack(trackKey);
-      const courses = portfolio.courseMap[trackKey] || [];
+      const contentTrack = resolveTrackContentKey(trackKey as TrackKey);
+      const skills = portfolio.getSkillsForTrack(contentTrack);
+      const certifications = portfolio.getCertificationsForTrack(contentTrack);
+      const courses = portfolio.courseMap[contentTrack] || [];
       const education = portfolio.degrees;
-      const projects = projectsModule.getProjectsForTrack(trackKey);
+      const projects = projectsModule.getProjectsForTrack(contentTrack);
       const contactInfo = personalModule.contactInfo;
-      const summary = personalModule.professionalSummaries[trackKey] || personalModule.professionalSummaries['software-engineer'];
+      const summary = personalModule.professionalSummaries[contentTrack] || personalModule.professionalSummaries['software-engineer'];
       const experience = personalModule.getExperienceForTrack ? 
-        personalModule.getExperienceForTrack(trackKey) : [];
+        personalModule.getExperienceForTrack(contentTrack) : [];
       
       setResumeData({
         track: trackKey,

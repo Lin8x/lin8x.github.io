@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import tracksModule from '../src/data/tracks.ts';
 
-const TRACKS = ['cloud', 'dataengineer', 'gamedev', 'software-engineer'];
+const { PROFESSIONAL_TRACK_KEYS } = tracksModule;
+const TRACKS = [...PROFESSIONAL_TRACK_KEYS];
 
 function emptyTrackTemplate() {
   return {};

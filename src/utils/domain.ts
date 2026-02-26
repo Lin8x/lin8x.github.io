@@ -1,17 +1,9 @@
-// Utility to detect current subdomain and map to track.
-export type TrackKey = 'cloud' | 'dataengineer' | 'gamedev' | 'software-engineer' | 'all';
-
-function mapSubdomainToTrack(subdomain: string): TrackKey {
-  if (subdomain === 'swe') return 'software-engineer';
-  if (subdomain === 'data') return 'dataengineer';
-  if (subdomain === 'cloud' || subdomain === 'gamedev' || subdomain === 'all') return subdomain;
-  return 'all';
-}
+import { getTrackFromSubdomain, type TrackKey } from '../data/tracks';
 
 export function getTrackFromHost(hostname: string): TrackKey {
   const cleanHost = hostname.toLowerCase().trim();
   const sub = cleanHost.split('.')[0];
-  return mapSubdomainToTrack(sub);
+  return getTrackFromSubdomain(sub);
 }
 
 export function getCurrentTrack(hostname?: string): TrackKey {
@@ -22,7 +14,7 @@ export function getCurrentTrack(hostname?: string): TrackKey {
   }
 
   if (import.meta.env.PUBLIC_SUBDOMAIN) {
-    return mapSubdomainToTrack(String(import.meta.env.PUBLIC_SUBDOMAIN).toLowerCase());
+    return getTrackFromSubdomain(String(import.meta.env.PUBLIC_SUBDOMAIN).toLowerCase());
   }
 
   // Default to 'all' when hostname is unavailable.

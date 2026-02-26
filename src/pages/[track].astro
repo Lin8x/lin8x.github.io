@@ -4,9 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from '../components/ProjectCard';
 import { marked } from 'marked';
-import { getCurrentTrack, isFunDomain } from '../utils/domain';
-import type { TrackKey } from '../utils/domain';
-import { TRACKS, TRACKS_BY_KEY } from '../data/tracks';
+import { getCurrentTrack } from '../utils/domain';
+import { TRACKS, TRACKS_BY_KEY, resolveTrackContentKey, type TrackKey } from '../data/tracks';
 import TrackQuiz from '../components/game/Quiz';
 import SecretEasterEgg from '../components/game/SecretEasterEgg';
 import { getSkillsForTrack, getCertificationsForTrack, allSkills, allCertifications, courseMap, degrees } from '../data/portfolio';
@@ -23,20 +22,21 @@ export async function getStaticPaths() {
 const routeTrack = Astro.params.track ?? 'all';
 const hostTrack = getCurrentTrack(Astro.url.hostname);
 const subdomainTrack = hostTrack === 'all' ? routeTrack : hostTrack;
-const validTracks: readonly TrackKey[] = ['cloud', 'dataengineer', 'gamedev', 'software-engineer', 'all'];
-const activeTrack: TrackKey = validTracks.includes(subdomainTrack as TrackKey) ? (subdomainTrack as TrackKey) : 'all';
-const showFun = isFunDomain(Astro.url.hostname);
+const validTrackSet = new Set(TRACKS.map((track) => track.key));
+const activeTrack: TrackKey = validTrackSet.has(subdomainTrack as TrackKey) ? (subdomainTrack as TrackKey) : 'all';
+const contentTrack = activeTrack === 'all' ? 'all' : resolveTrackContentKey(activeTrack as TrackKey);
+const showFun = activeTrack === 'all';
 
 const allCourses = Object.values(courseMap).flat();
 const uniqueAllCourses = Array.from(new Map(allCourses.map((course) => [course.name, course])).values());
 
-const currentSkills = activeTrack === 'all' ? allSkills : getSkillsForTrack(activeTrack);
-const currentCerts = activeTrack === 'all' ? allCertifications : getCertificationsForTrack(activeTrack);
-const currentCourses = activeTrack === 'all' ? uniqueAllCourses : (courseMap[activeTrack] || []);
+const currentSkills = activeTrack === 'all' ? allSkills : getSkillsForTrack(contentTrack);
+const currentCerts = activeTrack === 'all' ? allCertifications : getCertificationsForTrack(contentTrack);
+const currentCourses = activeTrack === 'all' ? uniqueAllCourses : (courseMap[contentTrack] || []);
 const trackCourses = currentCourses.map(c => c.name);
 const officialCertsCount = currentCerts.filter((cert) => cert.type === 'certification').length;
 const allDegrees = degrees;
-const currentExperience = activeTrack === 'all' ? workExperience : getExperienceForTrack(activeTrack);
+const currentExperience = activeTrack === 'all' ? workExperience : getExperienceForTrack(contentTrack);
 const regularExperience = currentExperience.filter((exp) => ['internship', 'full-time', 'part-time'].includes(exp.type));
 const leadershipVolunteerExperience = currentExperience.filter((exp) => ['leadership', 'volunteer'].includes(exp.type));
 const regularExperiencePreviewCount = 3;
@@ -48,7 +48,7 @@ const extraVolunteerExperience = leadershipVolunteerExperience.slice(volunteerPr
 
 const allProjects = await getCollection('projects');
 const trackProjects = allProjects.filter((project) => 
-    activeTrack === 'all' ? true : project.data.tracks.includes(activeTrack)
+    activeTrack === 'all' ? true : project.data.tracks.includes(contentTrack)
 ).sort((a, b) => {
         if (a.data.featured && !b.data.featured) return -1;
         if (!a.data.featured && b.data.featured) return 1;
@@ -62,13 +62,15 @@ const extraProjects = trackProjects.slice(projectPreviewCount);
 const activeTrackMeta = TRACKS_BY_KEY[activeTrack] || TRACKS_BY_KEY['all'];
 const title = activeTrackMeta.name;
 const desc = activeTrackMeta.desc;
-const aboutContent: Record<TrackKey, string> = {
+const aboutContent: Partial<Record<TrackKey, string>> = {
     cloud: "I enjoy turning infrastructure into dependable systems teams can trust day to day. My cloud work is grounded in reliability, observability, and pragmatic delivery, balancing speed with long-term maintainability.",
+    it: "I enjoy keeping infrastructure dependable, secure, and easy for teams to operate. My IT-focused work emphasizes uptime, clear operations, and practical system administration across cloud and on-prem environments.",
     dataengineer: "I like building data pipelines that are clear, verifiable, and useful to decision-makers. My focus is reducing ambiguity in data workflows so teams can move from raw inputs to confident actions faster.",
     gamedev: "I enjoy shipping interactive systems where technical constraints and player experience both matter. My game development work combines hands-on implementation with team coordination and production discipline.",
     'software-engineer': "I build software with an emphasis on clarity, maintainability, and measurable outcomes. I care about strong fundamentals, clean architecture decisions, and delivering value consistently across teams.",
     all: "I work across cloud, data, software, and game development, but the common thread is the same: build systems that are reliable, understandable, and useful in real-world contexts. I value clear communication, ownership, and practical engineering decisions.",
 };
+const aboutText = aboutContent[activeTrack] || `I focus on ${title.toLowerCase()} with practical, results-oriented execution and clear technical communication.`;
 const projectPar: Record<string, { problem: string; action: string; result: string }> = {
     'minecraft-hybrid-cloud': {
         problem: 'Needed reliable low-latency game hosting beyond a single environment.',
@@ -141,7 +143,7 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
         </h2>
         <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 md:p-7 text-left">
           <p class="text-gray-300 text-base md:text-lg leading-relaxed">
-            {aboutContent[activeTrack]}
+            {aboutText}
           </p>
         </div>
       </div>

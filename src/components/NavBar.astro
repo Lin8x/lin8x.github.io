@@ -3,13 +3,13 @@
 import ResumeGenerator from './ResumeGenerator';
 import { getCurrentTrack, isFunDomain } from '../utils/domain';
 import { PROFESSIONAL_TRACKS } from '../data/tracks';
-let showFun = isFunDomain(Astro.url.hostname);
 
 interface Props {
   track?: string;
 }
 
 const { track } = Astro.props;
+let showFun = track ? track === 'all' : isFunDomain(Astro.url.hostname);
 const detectedTrack = getCurrentTrack(Astro.url.hostname);
 const currentTrack = track || (detectedTrack === 'all' ? 'software-engineer' : detectedTrack);
 const resumeVariant = showFun ? 'dropdown' : 'button';

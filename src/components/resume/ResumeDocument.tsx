@@ -3,6 +3,7 @@ import {
   PROFESSIONAL_TRACKS,
   DEFAULT_RESUME_SECTION_ORDER,
   RESUME_SECTION_ORDER_BY_TRACK,
+  getTrackRoleTitle,
   type ResumeSectionKey,
 } from '../../data/tracks';
 
@@ -178,7 +179,7 @@ const styles = StyleSheet.create({
 });
 
 export const trackNames: Record<string, string> = PROFESSIONAL_TRACKS.reduce((acc, track) => {
-  acc[track.key] = track.name;
+  acc[track.key] = getTrackRoleTitle(track.key);
   return acc;
 }, {} as Record<string, string>);
 

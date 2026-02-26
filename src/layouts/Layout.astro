@@ -15,7 +15,7 @@ import NavBar from '../components/NavBar.astro';
 import AnimatedBackground from '../components/AnimatedBackground';
 import { isFunDomain } from '../utils/domain';
 import '../styles/global.css';
-let showFun = isFunDomain(Astro.url.hostname);
+let showFun = track ? track === 'all' : isFunDomain(Astro.url.hostname);
 ---
 
 <!doctype html>

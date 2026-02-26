@@ -2,13 +2,16 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import personalModule from '../src/data/personal.ts';
+import tracksModule from '../src/data/tracks.ts';
 
 const { getExperienceForTrack, contactInfo } = personalModule;
+const { resolveTrackContentKey, PROFESSIONAL_TRACK_KEYS } = tracksModule;
 
-const TRACKS = ['cloud', 'dataengineer', 'gamedev', 'software-engineer'];
+const TRACKS = [...PROFESSIONAL_TRACK_KEYS];
 
 function buildTrackScaffold(track) {
-  const experience = getExperienceForTrack(track).map((item) => ({
+  const contentTrack = resolveTrackContentKey(track);
+  const experience = getExperienceForTrack(contentTrack).map((item) => ({
     entity: item.organizationType || '',
     role: item.title,
     company: 'REPLACEME',

@@ -14,6 +14,22 @@ Defined tracks:
 - `dataengineer`
 - `gamedev`
 - `software-engineer`
+- `it` (reuses cloud content via `contentSource`)
+
+## Track Config Fields
+
+In `src/data/tracks.ts`, each track can define:
+- `name`: public label shown in navigation
+- `roleTitle`: resume/job-title label
+- `roleAliases`: optional alternate role labels (for targeting different job title wording)
+- `contentSource`: reuse another track's data instead of retagging all content
+- `domainAliases`: subdomain aliases (e.g., `swe`, `data`)
+
+Example use case:
+- Keep Cloud content, but expose an IT-targeted page/resume by setting:
+  - `key: 'it'`
+  - `contentSource: 'cloud'`
+  - `roleTitle: 'IT Engineer'`
 
 ## Main Data Sources
 
@@ -44,6 +60,10 @@ Section order config:
 - `npm run dev`
 - `npm run build`
 - `npm run astro -- check`
+- `npm run domain:cname`
+- `npm run domain:cloudflare:init`
+- `npm run domain:cloudflare:plan`
+- `npm run domain:cloudflare:apply`
 - `npm run resume:private:scaffold`
 - `npm run resume:private -- <track>`
 - `npm run resume:private`
@@ -52,3 +72,103 @@ Section order config:
 
 - `private/` is fully gitignored.
 - Private resume docs are in `README/PRIVATE_RESUME.md`.
+- For role-name changes/aliases, editing `src/data/tracks.ts` is enough.
+- For brand new content tracks without `contentSource`, you still need to tag data in:
+  - `src/data/portfolio.ts`
+  - `src/data/personal.ts`
+  - `src/data/resumeProjects.ts`
+
+## Cloudflare + GitHub Pages
+
+Use GitHub Pages for apex domain, and Cloudflare redirects for subdomains -> track paths.
+
+1. GitHub Pages custom domain:
+- Set custom domain to `danieljalali.com` in repo Pages settings.
+- Enable HTTPS in Pages settings.
+
+2. Cloudflare DNS (for apex):
+- Create these `A` records for `@`:
+  - `185.199.108.153`
+  - `185.199.109.153`
+  - `185.199.110.153`
+  - `185.199.111.153`
+- Optional `AAAA` records for `@`:
+  - `2606:50c0:8000::153`
+  - `2606:50c0:8001::153`
+  - `2606:50c0:8002::153`
+  - `2606:50c0:8003::153`
+- For `www`, add `CNAME` -> `<your-github-username>.github.io`.
+
+3. Cloudflare DNS entries for redirect-only subdomains:
+- Add proxied `CNAME` records:
+  - `cloud` -> `danieljalali.com`
+  - `data` -> `danieljalali.com`
+  - `gamedev` -> `danieljalali.com`
+  - `swe` -> `danieljalali.com`
+
+4. Cloudflare Redirect Rules:
+- `cloud.danieljalali.com/*` -> `https://danieljalali.com/cloud`
+- `data.danieljalali.com/*` -> `https://danieljalali.com/dataengineer`
+- `gamedev.danieljalali.com/*` -> `https://danieljalali.com/gamedev`
+- `swe.danieljalali.com/*` -> `https://danieljalali.com/software-engineer`
+- Status code: `301`.
+
+Why redirects: this repo is one Pages site. Subdomains are best routed to track paths.
+
+## Cloudflare Automation (Safe Mode)
+
+Scripts:
+- `scripts/init-cloudflare-sync-config.mjs`
+- `scripts/sync-cloudflare-routes.mjs`
+
+Config file (local-only, in gitignored folder):
+- `private/cloudflare-sync.json`
+
+1. Initialize config:
+- `npm run domain:cloudflare:init`
+
+2. Fill `private/cloudflare-sync.json`:
+- `api_token`
+- `zone_id`
+- optional `access_account_id` (recommended for Access automation; if empty, zone scope is used)
+- `apex_domain`
+- optional:
+  - `enabled_tracks` (empty = all professional tracks)
+  - `cname_target`
+  - `redirect_base_url`
+  - `redirect_status_code`
+  - `manage_redirects` (`false` = DNS-only sync, recommended default)
+  - `manage_access_public_bypass` (`true` = auto-create public Access bypass apps for track subdomains)
+  - `proxied`
+
+3. Dry run first (no changes):
+- `npm run domain:cloudflare:plan`
+
+4. Apply changes:
+- `npm run domain:cloudflare:apply`
+
+Safety behavior:
+- Default is dry-run.
+- No bulk deletion.
+- Only upserts managed CNAME records and managed redirect rules.
+- Existing unrelated Cloudflare records/rules are preserved.
+- Access automation only creates/uses exact track-subdomain Access apps and bypass policies; it does not modify wildcard app config.
+
+Required token permissions by feature:
+- DNS sync:
+  - `Zone -> DNS -> Edit`
+  - `Zone -> Zone -> Read`
+- Redirect sync (`manage_redirects: true`):
+  - permission for dynamic redirect/ruleset writes in your account
+- Access public bypass sync (`manage_access_public_bypass: true`):
+  - Access app/policy write permission for the selected account/zone scope
+
+## CNAME Automation
+
+`npm run domain:cname` writes `public/CNAME` from `SITE_DOMAIN` env var.
+
+- Default domain: `danieljalali.com`
+- Override example:
+  - `SITE_DOMAIN=example.com npm run domain:cname`
+
+`npm run build` runs this automatically before Astro build.

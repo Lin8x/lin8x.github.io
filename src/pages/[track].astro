@@ -1,93 +1,514 @@
 ---
+
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import ProjectCard from '../components/ProjectCard';
+import { marked } from 'marked';
+import { getCurrentTrack, isFunDomain } from '../utils/domain';
+import type { TrackKey } from '../utils/domain';
+import { TRACKS, TRACKS_BY_KEY } from '../data/tracks';
 import TrackQuiz from '../components/game/Quiz';
 import SecretEasterEgg from '../components/game/SecretEasterEgg';
-import { marked } from 'marked'; 
+import { getSkillsForTrack, getCertificationsForTrack, allSkills, allCertifications, courseMap, degrees } from '../data/portfolio';
+import { getExperienceForTrack, workExperience } from '../data/personal';
+import PersonalModulesPreview from '../components/PersonalModulesPreview';
 
 export async function getStaticPaths() {
-  const tracks = [
-    { slug: 'cloud', title: 'Cloud Engineering', desc: 'Building resilient, scalable infrastructure.' },
-    { slug: 'dataengineer', title: 'Data Engineering', desc: 'Pipelines, ETL, and Data Warehousing.' },
-    { slug: 'gamedev', title: 'Game Development', desc: 'Interactive experiences and 3D Systems.' },
-    { slug: 'software-engineer', title: 'Software Engineering', desc: 'Full-stack development and tooling.' },
-  ];
-
-  return tracks.map((track) => ({
+  return TRACKS.map((track) => ({
     params: { track: track.slug },
-    props: { ...track },
+    props: { key: track.key, title: track.name, desc: track.desc },
   }));
 }
 
-const { track } = Astro.params;
-const { title, desc } = Astro.props;
+const routeTrack = Astro.params.track ?? 'all';
+const hostTrack = getCurrentTrack(Astro.url.hostname);
+const subdomainTrack = hostTrack === 'all' ? routeTrack : hostTrack;
+const validTracks: readonly TrackKey[] = ['cloud', 'dataengineer', 'gamedev', 'software-engineer', 'all'];
+const activeTrack: TrackKey = validTracks.includes(subdomainTrack as TrackKey) ? (subdomainTrack as TrackKey) : 'all';
+const showFun = isFunDomain(Astro.url.hostname);
 
-import { getSkillsForTrack, getCertificationsForTrack, courseMap, degrees } from '../data/portfolio';
+const allCourses = Object.values(courseMap).flat();
+const uniqueAllCourses = Array.from(new Map(allCourses.map((course) => [course.name, course])).values());
 
-const currentSkills = getSkillsForTrack(track);
-const currentCerts = getCertificationsForTrack(track);
-const currentCourses = courseMap[track] || [];
+const currentSkills = activeTrack === 'all' ? allSkills : getSkillsForTrack(activeTrack);
+const currentCerts = activeTrack === 'all' ? allCertifications : getCertificationsForTrack(activeTrack);
+const currentCourses = activeTrack === 'all' ? uniqueAllCourses : (courseMap[activeTrack] || []);
 const trackCourses = currentCourses.map(c => c.name);
+const officialCertsCount = currentCerts.filter((cert) => cert.type === 'certification').length;
 const allDegrees = degrees;
+const currentExperience = activeTrack === 'all' ? workExperience : getExperienceForTrack(activeTrack);
+const regularExperience = currentExperience.filter((exp) => ['internship', 'full-time', 'part-time'].includes(exp.type));
+const leadershipVolunteerExperience = currentExperience.filter((exp) => ['leadership', 'volunteer'].includes(exp.type));
+const regularExperiencePreviewCount = 3;
+const volunteerPreviewCount = 3;
+const visibleRegularExperience = regularExperience.slice(0, regularExperiencePreviewCount);
+const extraRegularExperience = regularExperience.slice(regularExperiencePreviewCount);
+const visibleVolunteerExperience = leadershipVolunteerExperience.slice(0, volunteerPreviewCount);
+const extraVolunteerExperience = leadershipVolunteerExperience.slice(volunteerPreviewCount);
 
 const allProjects = await getCollection('projects');
 const trackProjects = allProjects.filter((project) => 
-  project.data.tracks.includes(track)
+    activeTrack === 'all' ? true : project.data.tracks.includes(activeTrack)
 ).sort((a, b) => {
-    // Featured first, then by date (simplistic string sort for now)
-    if (a.data.featured && !b.data.featured) return -1;
-    if (!a.data.featured && b.data.featured) return 1;
-    return 0;
+        if (a.data.featured && !b.data.featured) return -1;
+        if (!a.data.featured && b.data.featured) return 1;
+        return 0;
 });
+const projectPreviewCount = 4;
+const visibleProjects = trackProjects.slice(0, projectPreviewCount);
+const extraProjects = trackProjects.slice(projectPreviewCount);
+
+// Set title/desc for each track
+const activeTrackMeta = TRACKS_BY_KEY[activeTrack] || TRACKS_BY_KEY['all'];
+const title = activeTrackMeta.name;
+const desc = activeTrackMeta.desc;
+const aboutContent: Record<TrackKey, string> = {
+    cloud: "I enjoy turning infrastructure into dependable systems teams can trust day to day. My cloud work is grounded in reliability, observability, and pragmatic delivery, balancing speed with long-term maintainability.",
+    dataengineer: "I like building data pipelines that are clear, verifiable, and useful to decision-makers. My focus is reducing ambiguity in data workflows so teams can move from raw inputs to confident actions faster.",
+    gamedev: "I enjoy shipping interactive systems where technical constraints and player experience both matter. My game development work combines hands-on implementation with team coordination and production discipline.",
+    'software-engineer': "I build software with an emphasis on clarity, maintainability, and measurable outcomes. I care about strong fundamentals, clean architecture decisions, and delivering value consistently across teams.",
+    all: "I work across cloud, data, software, and game development, but the common thread is the same: build systems that are reliable, understandable, and useful in real-world contexts. I value clear communication, ownership, and practical engineering decisions.",
+};
+const projectPar: Record<string, { problem: string; action: string; result: string }> = {
+    'minecraft-hybrid-cloud': {
+        problem: 'Needed reliable low-latency game hosting beyond a single environment.',
+        action: 'Built a hybrid stack combining homelab compute with AWS edge ingress.',
+        result: 'Supported 112 concurrent users with stable cross-environment operations.',
+    },
+    'self-hosted-lab': {
+        problem: 'Lacked reproducible infrastructure for database and analytics workloads.',
+        action: 'Provisioned Proxmox-hosted services with Dockerized data platforms.',
+        result: 'Enabled production-style testing across PostgreSQL/MySQL/Jupyter workloads.',
+    },
+    'patreon-integration': {
+        problem: 'Manual subscription tier management was inconsistent and slow.',
+        action: 'Implemented AWS-hosted OAuth 2.0 backend with async user sync.',
+        result: 'Automated entitlement updates and reduced manual operational overhead.',
+    },
+    'vendor-data-analysis': {
+        problem: 'Sales data across sources was fragmented and error-prone.',
+        action: 'Built ETL-style normalization/validation workflows in Python and SQL.',
+        result: 'Produced cleaner multi-source reporting for faster decision-making.',
+    },
+};
 ---
 
-<Layout title={`Daniel Jalali | ${title}`}>
+<Layout title={`Daniel Jalali | ${title}`} track={activeTrack}>
   <div class="container mx-auto px-4 relative z-10">
     
-    {/* Navigation Anchor */}
-    <nav class="absolute top-8 left-4 md:left-0 z-50">
-        <a href="/" class="group flex items-center gap-2 text-sm font-mono text-gray-500 hover:text-white transition-colors backdrop-blur-md bg-black/30 p-2 rounded-lg">
-            <span class="p-1 rounded bg-gray-900 border border-gray-700 group-hover:border-brand-primary transition">←</span>
-            <span>Return to Hub</span>
-        </a>
-    </nav>
 
-    {/* Hero Section - Full Height */}
-    <header class="min-h-[90vh] flex flex-col justify-center items-center text-center animate-fade-in-up">
-      <div class="mb-6">
-          <span class="px-4 py-1.5 bg-gray-900 border border-gray-700 rounded-full text-xs text-brand-primary uppercase tracking-widest font-bold">
-              Selected Track
-          </span>
+    {/* No cross-track navigation in subdomains */}
+
+    {/* Hero Section */}
+    <header class="min-h-[56vh] flex flex-col justify-center items-center text-center animate-fade-in-up">
+      <div class="mb-6 relative group">
+        <div class="w-28 h-28 md:w-32 md:h-32 relative z-10 transition transform group-hover:scale-105 duration-500">
+          <img src="/images/profile/danielicon.png" alt="Daniel Jalali" class="w-full h-full object-contain filter drop-shadow-2xl" />
+        </div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 bg-brand-primary/15 blur-[60px] -z-10"></div>
       </div>
-      <h1 class="text-5xl md:text-8xl font-bold text-white mb-8 tracking-tight">
-        {title}
+      <h1 class="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">
+        Daniel Jalali
       </h1>
-      <p class="text-xl md:text-2xl text-gray-400 max-w-2xl leading-relaxed">
+      <p class="text-lg md:text-2xl text-brand-primary font-semibold max-w-3xl leading-relaxed mb-3">
+        {title}
+      </p>
+      <p class="text-base md:text-lg text-gray-400 max-w-2xl leading-relaxed">
         {desc}
       </p>
-      
-      <div class="mt-24 animate-bounce flex flex-col items-center gap-2 opacity-50">
-        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-3 w-full max-w-4xl">
+        <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-3">
+          <div class="text-xl font-bold text-white">{trackProjects.length}</div>
+          <div class="text-xs uppercase tracking-widest text-gray-500">Projects</div>
+        </div>
+        <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-3">
+          <div class="text-xl font-bold text-white">{officialCertsCount}</div>
+          <div class="text-xs uppercase tracking-widest text-gray-500">Official Certifications</div>
+        </div>
+        <div class="bg-gray-900/40 border border-gray-800 rounded-xl p-3">
+          <div class="text-xl font-bold text-white">{regularExperience.length}</div>
+          <div class="text-xs uppercase tracking-widest text-gray-500">Professional Roles</div>
+        </div>
       </div>
     </header>
 
-    {/* Education Section (Top of page) */}
-    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
+    {/* About Section */}
+    <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.02s;">
       <div class="max-w-6xl mx-auto w-full">
-         <h2 class="text-3xl font-bold text-white mb-12">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-6">
+          About Me
+        </h2>
+        <div class="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 md:p-7 text-left">
+          <p class="text-gray-300 text-base md:text-lg leading-relaxed">
+            {aboutContent[activeTrack]}
+          </p>
+        </div>
+      </div>
+    </section>
+
+    {/* Skills Section */}
+    {currentSkills.length > 0 && (
+      <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.04s;">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
+            Skills
+            </h2>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
+            {currentSkills.map(skill => (
+                <div class="flex flex-col items-center gap-2 group transition-all duration-300 hover:-translate-y-0.5">
+                <div class="w-12 h-12 md:w-14 md:h-14 bg-gray-900/50 rounded-xl flex items-center justify-center p-2.5 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition">
+                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-300 opacity-75 group-hover:opacity-100" />
+                </div>
+                <span class="text-xs font-mono text-gray-500 group-hover:text-white transition text-center leading-tight">{skill.name}</span>
+                </div>
+            ))}
+            </div>
+        </div>
+      </section>
+    )}
+
+    {/* Certifications & Coursework Section */}
+    {currentCerts.length > 0 && (
+      <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.06s;">
+         <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
+            Certifications & Coursework
+            </h2>
+            
+            {/* Logic to split Official Certs vs Udemy Courses */}
+            {(() => {
+                const officialCerts = currentCerts.filter(c => c.type === 'certification');
+                const courseWork = currentCerts.filter(c => c.type === 'course');
+
+                return (
+                    <div>
+                        {/* 1. Official Certifications */}
+                        {officialCerts.length > 0 && (
+                            <div class="mb-10">
+                                <h3 class="text-lg font-bold text-gray-400 mb-5 uppercase tracking-wider">Official Certifications</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {officialCerts.map(cert => {
+                                        return (
+                                            <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/50 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-brand-primary/50 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
+                                                <div class="w-16 h-16 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 group-hover:scale-110 transition">
+                                                    <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <h3 class={`text-lg font-bold leading-tight ${cert.url ? 'text-white group-hover:text-brand-primary transition' : 'text-white'}`}>{cert.name}</h3>
+                                                        {cert.url && (
+                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 group-hover:text-brand-primary transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                            </svg>
+                                                        )}
+                                                    </div>
+                                                    <p class="text-sm text-gray-400 mb-1">{cert.provider}</p>
+                                                    {cert.credentialId && (
+                                                        <p class="text-xs text-gray-600 font-mono mb-2">ID: {cert.credentialId}</p>
+                                                    )}
+                                                    
+                                                    <div class="flex gap-2">
+                                                        <span class="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full border border-purple-500/20">
+                                                            OFFICIAL CERT
+                                                        </span>
+                                                        {cert.status === 'completed' ? (
+                                                            <span class="inline-block px-3 py-1 bg-green-500/10 text-green-500 text-xs font-bold rounded-full border border-green-500/20">
+                                                            VERIFIED
+                                                            </span>
+                                                        ) : (
+                                                            <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
+                                                            IN PROGRESS
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Separator if both exist */}
+                        {officialCerts.length > 0 && courseWork.length > 0 && (
+                            <div class="w-full h-px bg-gray-800 my-10 relative">
+                                <div class="absolute left-1/2 -translate-x-1/2 -top-3 bg-black px-4 text-gray-600 text-sm font-mono">SUPPLEMENTAL LEARNING</div>
+                            </div>
+                        )}
+
+                        {/* 2. Supplemental Coursework (Udemy, etc) */}
+                        {courseWork.length > 0 && (
+                             <div class="mb-10">
+                                <h3 class="text-lg font-bold text-gray-400 mb-5 uppercase tracking-wider">Independent Coursework</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {courseWork.map(cert => (
+                                        <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/30 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-blue-500/30 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
+                                            <div class="w-14 h-14 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 grayscale group-hover:grayscale-0 transition">
+                                                <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
+                                            </div>
+                                            <div>
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <h3 class={`text-base font-bold leading-tight ${cert.url ? 'text-gray-200 group-hover:text-blue-400 transition' : 'text-gray-200'}`}>{cert.name}</h3>
+                                                    {cert.url && (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                                        </svg>
+                                                    )}
+                                                </div>
+                                                <p class="text-sm text-gray-500 mb-2">{cert.provider}</p>
+                                                
+                                                <div class="flex gap-2">
+                                                    <span class="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20">
+                                                        COURSEWORK
+                                                    </span>
+                                                    {cert.status === 'completed' ? (
+                                                        <span class="inline-block px-3 py-1 bg-green-500/5 text-green-500/80 text-xs font-bold rounded-full border border-green-500/10">
+                                                        COMPLETED
+                                                        </span>
+                                                    ) : (
+                                                        <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
+                                                        IN PROGRESS
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })()}
+         </div>
+      </section>
+    )}
+
+    {/* Projects Section */}
+    <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.08s;">
+        <div class="max-w-6xl mx-auto w-full">
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
+                Projects
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7">
+            {visibleProjects.map(async (project) => {
+                const html = await marked.parse(project.body);
+                
+                return (
+                <ProjectCard 
+                    client:load 
+                    title={project.data.title}
+                    description={project.data.description}
+                    problem={projectPar[project.id]?.problem}
+                    action={projectPar[project.id]?.action}
+                    result={projectPar[project.id]?.result}
+                    date={project.data.date}
+                    tags={project.data.tags}
+                    image={project.data.image}
+                    links={project.data.links}
+                    bodyHtml={html}
+                />
+                );
+            })}
+            </div>
+            {extraProjects.length > 0 && (
+              <>
+                <div id="extra-projects" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7 mt-6">
+                  {extraProjects.map(async (project) => {
+                      const html = await marked.parse(project.body);
+                      
+                      return (
+                      <ProjectCard 
+                          client:load 
+                          title={project.data.title}
+                          description={project.data.description}
+                          problem={projectPar[project.id]?.problem}
+                          action={projectPar[project.id]?.action}
+                          result={projectPar[project.id]?.result}
+                          date={project.data.date}
+                          tags={project.data.tags}
+                          image={project.data.image}
+                          links={project.data.links}
+                          bodyHtml={html}
+                      />
+                      );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  class="mt-6 px-4 py-2 rounded-lg border border-gray-700 bg-gray-900/60 text-sm md:text-base text-gray-200 hover:text-white hover:border-brand-primary/40 hover:bg-gray-900 transition inline-flex items-center gap-2"
+                  data-expand-toggle
+                  data-target="extra-projects"
+                  data-more-label={`Show ${extraProjects.length} more projects`}
+                  data-less-label="Show fewer projects"
+                >
+                  <span class="text-brand-primary">+</span>
+                  <span data-expand-label>Show {extraProjects.length} more projects</span>
+                </button>
+              </>
+            )}
+
+            {trackProjects.length === 0 && (
+            <div class="text-center py-16 border-2 border-dashed border-gray-800 rounded-3xl bg-gray-900/20">
+                <p class="text-lg text-gray-500 mb-2">No projects loaded for this track yet.</p>
+                <p class="text-sm font-mono text-gray-700">Initialize inventory module...</p>
+            </div>
+            )}
+        </div>
+    </section>
+
+    {/* Experience Section */}
+    {currentExperience.length > 0 && (
+      <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.1s;">
+        <div class="max-w-6xl mx-auto w-full">
+          <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
+            Experience
+          </h2>
+          {regularExperience.length > 0 && (
+            <div class="mb-10">
+              <h3 class="text-lg md:text-xl font-semibold text-gray-300 mb-5">Professional Experience</h3>
+              <div class="grid grid-cols-1 gap-5">
+                {visibleRegularExperience.map((exp) => (
+                  <article class="bg-gray-900/40 border border-gray-800 rounded-2xl p-5 md:p-6 text-left hover:border-brand-primary/40 transition">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+                        <div>
+                          <h4 class="text-xl font-bold text-white">{exp.title}</h4>
+                          {exp.organizationType && <p class="text-sm text-gray-500 mt-1">{exp.organizationType}</p>}
+                        </div>
+                      <p class="text-sm font-mono text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                    </div>
+                    <ul class="space-y-2">
+                      {exp.bullets.slice(0, 4).map((bullet) => (
+                        <li class="text-gray-300 text-base leading-relaxed flex gap-3">
+                          <span class="text-brand-primary">•</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+              {extraRegularExperience.length > 0 && (
+                <>
+                  <div id="extra-professional-experience" class="hidden grid grid-cols-1 gap-5 mt-5">
+                    {extraRegularExperience.map((exp) => (
+                      <article class="bg-gray-900/40 border border-gray-800 rounded-2xl p-5 md:p-6 text-left hover:border-brand-primary/40 transition">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+                            <div>
+                              <h4 class="text-xl font-bold text-white">{exp.title}</h4>
+                              {exp.organizationType && <p class="text-sm text-gray-500 mt-1">{exp.organizationType}</p>}
+                            </div>
+                          <p class="text-sm font-mono text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                        </div>
+                        <ul class="space-y-2">
+                          {exp.bullets.slice(0, 4).map((bullet) => (
+                            <li class="text-gray-300 text-base leading-relaxed flex gap-3">
+                              <span class="text-brand-primary">•</span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </article>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    class="mt-5 px-4 py-2 rounded-lg border border-gray-700 bg-gray-900/60 text-sm md:text-base text-gray-200 hover:text-white hover:border-brand-primary/40 hover:bg-gray-900 transition inline-flex items-center gap-2"
+                    data-expand-toggle
+                    data-target="extra-professional-experience"
+                    data-more-label={`Show ${extraRegularExperience.length} more professional roles`}
+                    data-less-label="Show fewer professional roles"
+                  >
+                    <span class="text-brand-primary">+</span>
+                    <span data-expand-label>Show {extraRegularExperience.length} more professional roles</span>
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+          {leadershipVolunteerExperience.length > 0 && (
+            <div>
+              <h3 class="text-lg md:text-xl font-semibold text-gray-300 mb-5">Leadership & Volunteer Experience</h3>
+              <div class="grid grid-cols-1 gap-5">
+                {visibleVolunteerExperience.map((exp) => (
+                  <article class="bg-gray-900/30 border border-gray-800 rounded-2xl p-5 md:p-6 text-left hover:border-brand-secondary/40 transition">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+                        <div>
+                          <h4 class="text-xl font-bold text-white">{exp.title}</h4>
+                          {exp.organizationType && <p class="text-sm text-gray-500 mt-1">{exp.organizationType}</p>}
+                        </div>
+                      <p class="text-sm font-mono text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                    </div>
+                    <ul class="space-y-2">
+                      {exp.bullets.slice(0, 4).map((bullet) => (
+                        <li class="text-gray-300 text-base leading-relaxed flex gap-3">
+                          <span class="text-brand-secondary">•</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))}
+              </div>
+              {extraVolunteerExperience.length > 0 && (
+                <>
+                  <div id="extra-volunteer-experience" class="hidden grid grid-cols-1 gap-5 mt-5">
+                    {extraVolunteerExperience.map((exp) => (
+                      <article class="bg-gray-900/30 border border-gray-800 rounded-2xl p-5 md:p-6 text-left hover:border-brand-secondary/40 transition">
+                        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
+                            <div>
+                              <h4 class="text-xl font-bold text-white">{exp.title}</h4>
+                              {exp.organizationType && <p class="text-sm text-gray-500 mt-1">{exp.organizationType}</p>}
+                            </div>
+                          <p class="text-sm font-mono text-gray-500">{exp.startDate} - {exp.endDate}</p>
+                        </div>
+                        <ul class="space-y-2">
+                          {exp.bullets.slice(0, 4).map((bullet) => (
+                            <li class="text-gray-300 text-base leading-relaxed flex gap-3">
+                              <span class="text-brand-secondary">•</span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </article>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    class="mt-5 px-4 py-2 rounded-lg border border-gray-700 bg-gray-900/60 text-sm md:text-base text-gray-200 hover:text-white hover:border-brand-secondary/40 hover:bg-gray-900 transition inline-flex items-center gap-2"
+                    data-expand-toggle
+                    data-target="extra-volunteer-experience"
+                    data-more-label={`Show ${extraVolunteerExperience.length} more leadership/volunteer roles`}
+                    data-less-label="Show fewer leadership/volunteer roles"
+                  >
+                    <span class="text-brand-secondary">+</span>
+                    <span data-expand-label>Show {extraVolunteerExperience.length} more leadership/volunteer roles</span>
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    {/* Education Section */}
+    <section class="py-12 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.12s;">
+      <div class="max-w-6xl mx-auto w-full">
+         <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
           Education
          </h2>
-         <div class="grid grid-cols-1 gap-8">
+         <div class="grid grid-cols-1 gap-6">
             {allDegrees.map(degree => (
-              <div class="bg-gray-900/40 p-8 rounded-2xl border border-gray-700 hover:border-brand-primary transition-all duration-300 relative overflow-hidden group">
+              <div class="bg-gray-900/40 p-6 rounded-2xl border border-gray-700 hover:border-brand-primary transition-all duration-300 relative overflow-hidden group">
                  <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition duration-500">
                     <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                  </div>
                  
                  <div class="relative z-10">
-                    <h3 class="text-2xl font-bold text-white tracking-tight mb-1">{degree.title}</h3>
-                    <p class="text-xl text-brand-primary mb-4">{degree.institution}</p>
+                    <h3 class="text-xl font-bold text-white tracking-tight mb-1">{degree.title}</h3>
+                    <p class="text-lg text-brand-primary mb-4">{degree.institution}</p>
                     
                     {/* Relevant Coursework Logic */}
                     {(() => {
@@ -125,202 +546,74 @@ const trackProjects = allProjects.filter((project) =>
       </div>
     </section>
 
-    {/* Certifications & Coursework Section */}
-    {currentCerts.length > 0 && (
-      <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.2s;">
-         <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12">
-            Certifications & Coursework
-            </h2>
-            
-            {/* Logic to split Official Certs vs Udemy Courses */}
-            {(() => {
-                const officialCerts = currentCerts.filter(c => c.type === 'certification');
-                const courseWork = currentCerts.filter(c => c.type === 'course');
+        {/* Fun/Interest preview for all-domain */}
+        {showFun && (
+          <>
+            <section class="py-20 border-t border-gray-900 animate-fade-in-up">
+              <div class="max-w-6xl mx-auto w-full">
+                <div class="rounded-3xl border border-brand-primary/30 bg-gradient-to-br from-brand-primary/10 to-transparent p-8 md:p-10 text-left">
+                  <p class="text-xs uppercase tracking-[0.2em] text-brand-primary mb-3">Interactive Portfolio Layer</p>
+                  <h3 class="text-2xl md:text-3xl font-bold text-white mb-3">This portfolio has hidden secrets and quizzes.</h3>
+                  <p class="text-gray-300 max-w-3xl leading-relaxed">
+                    Explore the interests module, discover hidden easter eggs, and test your understanding of real project decisions through track quizzes.
+                  </p>
+                </div>
+              </div>
+            </section>
+            <PersonalModulesPreview client:visible />
+          </>
+        )}
 
-                return (
-                    <div>
-                        {/* 1. Official Certifications */}
-                        {officialCerts.length > 0 && (
-                            <div class="mb-12">
-                                <h3 class="text-xl font-bold text-gray-400 mb-6 uppercase tracking-wider">Official Certifications</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {officialCerts.map(cert => {
-                                        const CardWrapper = cert.url ? 'a' : 'div';
-                                        const linkProps = cert.url ? { href: cert.url, target: '_blank', rel: 'noopener noreferrer' } : {};
-                                        return (
-                                            <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/50 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-brand-primary/50 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
-                                                <div class="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 group-hover:scale-110 transition">
-                                                    <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
-                                                </div>
-                                                <div>
-                                                    <div class="flex items-center gap-2 mb-1">
-                                                        <h3 class={`text-xl font-bold leading-tight ${cert.url ? 'text-white group-hover:text-brand-primary transition' : 'text-white'}`}>{cert.name}</h3>
-                                                        {cert.url && (
-                                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-500 group-hover:text-brand-primary transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                            </svg>
-                                                        )}
-                                                    </div>
-                                                    <p class="text-sm text-gray-400 mb-1">{cert.provider}</p>
-                                                    {cert.credentialId && (
-                                                        <p class="text-xs text-gray-600 font-mono mb-2">ID: {cert.credentialId}</p>
-                                                    )}
-                                                    
-                                                    <div class="flex gap-2">
-                                                        <span class="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full border border-purple-500/20">
-                                                            OFFICIAL CERT
-                                                        </span>
-                                                        {cert.status === 'completed' ? (
-                                                            <span class="inline-block px-3 py-1 bg-green-500/10 text-green-500 text-xs font-bold rounded-full border border-green-500/20">
-                                                            VERIFIED
-                                                            </span>
-                                                        ) : (
-                                                            <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
-                                                            IN PROGRESS
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        )}
 
-                        {/* Separator if both exist */}
-                        {officialCerts.length > 0 && courseWork.length > 0 && (
-                            <div class="w-full h-px bg-gray-800 my-12 relative">
-                                <div class="absolute left-1/2 -translate-x-1/2 -top-3 bg-black px-4 text-gray-600 text-sm font-mono">SUPPLEMENTAL LEARNING</div>
-                            </div>
-                        )}
-
-                        {/* 2. Supplemental Coursework (Udemy, etc) */}
-                        {courseWork.length > 0 && (
-                             <div class="mb-12">
-                                <h3 class="text-xl font-bold text-gray-400 mb-6 uppercase tracking-wider">Independent Coursework</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {courseWork.map(cert => (
-                                        <a href={cert.url} target={cert.url ? '_blank' : undefined} rel={cert.url ? 'noopener noreferrer' : undefined} class={`relative bg-gray-900/30 p-6 rounded-2xl flex items-center gap-6 border border-gray-800 hover:border-blue-500/30 transition duration-300 group ${cert.url ? 'cursor-pointer' : 'cursor-default'}`}>
-                                            <div class="w-16 h-16 bg-white/5 rounded-xl flex items-center justify-center p-2 shrink-0 grayscale group-hover:grayscale-0 transition">
-                                                <img src={cert.image} alt={cert.name} class="max-w-full max-h-full object-contain" />
-                                            </div>
-                                            <div>
-                                                <div class="flex items-center gap-2 mb-1">
-                                                    <h3 class={`text-lg font-bold leading-tight ${cert.url ? 'text-gray-200 group-hover:text-blue-400 transition' : 'text-gray-200'}`}>{cert.name}</h3>
-                                                    {cert.url && (
-                                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600 group-hover:text-blue-400 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                        </svg>
-                                                    )}
-                                                </div>
-                                                <p class="text-sm text-gray-500 mb-2">{cert.provider}</p>
-                                                
-                                                <div class="flex gap-2">
-                                                    <span class="inline-block px-3 py-1 bg-blue-500/10 text-blue-400 text-xs font-bold rounded-full border border-blue-500/20">
-                                                        COURSEWORK
-                                                    </span>
-                                                    {cert.status === 'completed' ? (
-                                                        <span class="inline-block px-3 py-1 bg-green-500/5 text-green-500/80 text-xs font-bold rounded-full border border-green-500/10">
-                                                        COMPLETED
-                                                        </span>
-                                                    ) : (
-                                                        <span class="inline-block px-3 py-1 bg-yellow-500/10 text-yellow-500 text-xs font-bold rounded-full border border-yellow-500/20">
-                                                        IN PROGRESS
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </a>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+        {/* Gamification/Quiz only in 'all' domain */}
+        {showFun && (
+            <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
+                <div class="max-w-6xl mx-auto w-full">
+                    <h2 class="text-3xl font-bold text-white mb-12">
+                        Quiz
+                    </h2>
+                    <div class="flex justify-center">
+                                <TrackQuiz client:visible track={activeTrack} />
                     </div>
-                );
-            })()}
-         </div>
-      </section>
-    )}
-
-    {/* Skills Section */}
-    {currentSkills.length > 0 && (
-      <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.3s;">
-        <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12">
-            Skills
-            </h2>
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4 md:gap-6">
-            {currentSkills.map(skill => (
-                <div class="flex flex-col items-center gap-2 group transition-all duration-300 hover:-translate-y-1">
-                <div class="w-14 h-14 md:w-16 md:h-16 bg-gray-900/50 rounded-xl flex items-center justify-center p-3 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition">
-                    <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-300 opacity-70 group-hover:opacity-100" />
                 </div>
-                <span class="text-xs font-mono text-gray-500 group-hover:text-white transition text-center leading-tight">{skill.name}</span>
-                </div>
-            ))}
-            </div>
-        </div>
-      </section>
-    )}
-
-    {/* Projects Section - Spacious Grid */}
-    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.4s;">
-        <div class="max-w-6xl mx-auto w-full">
-            <h2 class="text-3xl font-bold text-white mb-12">
-                Projects
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {trackProjects.map(async (project) => {
-                const html = await marked.parse(project.body);
-                
-                return (
-                <ProjectCard 
-                    client:load 
-                    title={project.data.title}
-                    description={project.data.description}
-                    date={project.data.date}
-                    tags={project.data.tags}
-                    image={project.data.image}
-                    links={project.data.links}
-                    bodyHtml={html}
-                />
-                );
-            })}
-            </div>
-
-            {trackProjects.length === 0 && (
-            <div class="text-center py-24 border-2 border-dashed border-gray-800 rounded-3xl bg-gray-900/20">
-                <p class="text-xl text-gray-500 mb-2">No projects loaded for this track yet.</p>
-                <p class="text-sm font-mono text-gray-700">Initialize inventory module...</p>
-            </div>
-            )}
-        </div>
-    </section>
-
-    {/* Gamification: Quiz (BOTTOM) */}
-    <section class="py-24 border-t border-gray-900 animate-fade-in-up" style="animation-delay: 0.5s;">
-      <div class="max-w-6xl mx-auto w-full">
-        <h2 class="text-3xl font-bold text-white mb-12">
-          Quiz
-        </h2>
-        <div class="flex justify-center">
-              <TrackQuiz client:visible track={track} />
-        </div>
-      </div>
-    </section>
+            </section>
+        )}
 
   </div>
   
-  {/* Secret Easter Egg - Only on Gamedev track */}
-  {track === 'gamedev' && (
-    <SecretEasterEgg 
-      client:load
-      secretId="aqua_dance" 
-      imageSrc="/images/secrets/aqua-dance.gif"
-      points={100}
-      position="bottom-left"
-    />
-  )}
+    {/* Fun features only in 'all' domain */}
+    {showFun && (
+        <>
+            {/* Example: Secret Easter Egg for all */}
+            <SecretEasterEgg 
+                client:load
+                secretId="aqua_dance" 
+                imageSrc="/images/secrets/aqua-dance.gif"
+                points={100}
+                position="bottom-left"
+            />
+            {/* Add other fun/game components here as needed */}
+        </>
+    )}
+    <script>
+      const toggles = document.querySelectorAll('[data-expand-toggle]');
+      toggles.forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          const targetId = toggle.getAttribute('data-target');
+          if (!targetId) return;
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          const isHidden = target.classList.contains('hidden');
+          target.classList.toggle('hidden', !isHidden);
+          const moreLabel = toggle.getAttribute('data-more-label') || 'Show more';
+          const lessLabel = toggle.getAttribute('data-less-label') || 'Show less';
+          const label = toggle.querySelector('[data-expand-label]');
+          if (label) {
+            label.textContent = isHidden ? lessLabel : moreLabel;
+          } else {
+            toggle.textContent = isHidden ? lessLabel : moreLabel;
+          }
+        });
+      });
+    </script>
 </Layout>

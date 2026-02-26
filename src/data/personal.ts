@@ -38,6 +38,7 @@ export const professionalSummaries: Record<string, string> = {
 // ============================================
 export interface WorkExperience {
     title: string;           // Job title
+    organizationType?: string; // Anonymized org context (e.g., Startup, Public Sector, University Lab)
     type: string;            // "internship" | "full-time" | "part-time" | "leadership" | "volunteer"
     startDate: string;       // e.g., "August 2022"
     endDate: string;         // e.g., "September 2024" or "Present"
@@ -48,6 +49,7 @@ export interface WorkExperience {
 export const workExperience: WorkExperience[] = [
     {
         title: "Student Senior Robotic Lab Assistant",
+        organizationType: "University Research Lab",
         type: "part-time",
         startDate: "August 2022",
         endDate: "September 2024",
@@ -63,6 +65,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Data Science Intern",
+        organizationType: "Enterprise Internship Program",
         type: "internship",
         startDate: "May 2024",
         endDate: "May 2024",
@@ -78,6 +81,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Software Engineering Intern",
+        organizationType: "Private Software Company",
         type: "internship",
         startDate: "March 2024",
         endDate: "April 2024",
@@ -90,6 +94,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Lead UdonSharp Developer",
+        organizationType: "Independent VR Studio",
         type: "full-time",
         startDate: "May 2023",
         endDate: "August 2023",
@@ -102,6 +107,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Product Manager & Director",
+        organizationType: "Student-Led Engineering Organization",
         type: "leadership",
         startDate: "October 2022",
         endDate: "Present",
@@ -115,6 +121,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Product Manager",
+        organizationType: "Student-Led Engineering Organization",
         type: "leadership",
         startDate: "October 2022",
         endDate: "Present",
@@ -127,6 +134,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Sales & Technology Associate",
+        organizationType: "Consumer Electronics Retail",
         type: "part-time",
         startDate: "March 2022",
         endDate: "August 2023",
@@ -139,6 +147,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Full-Stack Development Member",
+        organizationType: "Community Tech Team",
         type: "part-time",
         startDate: "March 2022",
         endDate: "Present",
@@ -151,6 +160,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Game Development Technology Leader",
+        organizationType: "University Developer Community",
         type: "leadership",
         startDate: "October 2021",
         endDate: "Present",
@@ -163,6 +173,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Tutorial Graphic Designer",
+        organizationType: "Creative Agency Environment",
         type: "part-time",
         startDate: "February 2022",
         endDate: "May 2022",
@@ -174,6 +185,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Cybersecurity Club Founder & President",
+        organizationType: "Educational Nonprofit / Club",
         type: "leadership",
         startDate: "August 2018",
         endDate: "August 2021",
@@ -186,6 +198,7 @@ export const workExperience: WorkExperience[] = [
     },
     {
         title: "Front End Developer & Graphic Designer",
+        organizationType: "Creative Development Team",
         type: "part-time",
         startDate: "September 2018",
         endDate: "November 2019",

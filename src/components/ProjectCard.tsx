@@ -5,6 +5,9 @@ import { ExternalLink, Github, ArrowLeft, BookOpen } from 'lucide-react';
 interface ProjectCardProps {
   title: string;
   description: string;
+  problem?: string;
+  action?: string;
+  result?: string;
   date: string;
   tags: string[];
   image?: string;
@@ -16,7 +19,7 @@ interface ProjectCardProps {
   bodyHtml: string;
 }
 
-export default function ProjectCard({ title, description, date, tags, image, links, bodyHtml }: ProjectCardProps) {
+export default function ProjectCard({ title, description, problem, action, result, date, tags, image, links, bodyHtml }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -61,32 +64,40 @@ export default function ProjectCard({ title, description, date, tags, image, lin
       {/* Card Preview */}
       <div 
         onClick={() => setIsOpen(true)}
-        className="bg-gray-900 border border-gray-800 rounded-xl p-6 cursor-pointer hover:border-brand-primary/50 hover:shadow-lg hover:shadow-brand-primary/10 transition-all duration-300 transform hover:-translate-y-2 group h-full flex flex-col justify-between"
+        className="bg-gray-900 border border-gray-800 rounded-2xl p-7 md:p-8 cursor-pointer hover:border-brand-primary/50 hover:shadow-lg hover:shadow-brand-primary/10 transition-all duration-300 transform hover:-translate-y-1 group h-full flex flex-col justify-between min-h-[320px]"
       >
         <div>
           <div className="flex justify-between items-start mb-4">
             <div>
               <span className="text-xs font-mono text-brand-primary mb-2 block">{date}</span>
-              <h3 className="text-xl font-bold text-white group-hover:text-brand-primary transition">{title}</h3>
+              <h3 className="text-2xl font-bold text-white group-hover:text-brand-primary transition leading-tight">{title}</h3>
             </div>
             {image && (
-              <div className="w-12 h-12 rounded-lg bg-gray-800 overflow-hidden ml-4 flex-shrink-0 border border-gray-700">
+              <div className="w-14 h-14 rounded-lg bg-gray-800 overflow-hidden ml-4 flex-shrink-0 border border-gray-700">
                 <img src={image} alt={title} className="w-full h-full object-cover" />
               </div>
             )}
           </div>
           
-          <p className="text-gray-400 text-sm mb-6 line-clamp-3">{description}</p>
+          {problem && action && result ? (
+            <div className="space-y-2 mb-6">
+              <p className="text-sm text-gray-300 leading-relaxed"><span className="text-gray-500 font-semibold">Problem:</span> {problem}</p>
+              <p className="text-sm text-gray-300 leading-relaxed"><span className="text-gray-500 font-semibold">Action:</span> {action}</p>
+              <p className="text-sm text-gray-300 leading-relaxed"><span className="text-gray-500 font-semibold">Result:</span> {result}</p>
+            </div>
+          ) : (
+            <p className="text-gray-300 text-base leading-relaxed mb-7 line-clamp-4">{description}</p>
+          )}
         </div>
         
         <div className="flex flex-wrap gap-2">
           {tags.slice(0, 3).map(tag => (
-            <span key={tag} className="text-xs px-2 py-1 bg-gray-800 text-gray-300 rounded-full border border-gray-700">
+            <span key={tag} className="text-sm px-2.5 py-1 bg-gray-800 text-gray-300 rounded-full border border-gray-700">
               {tag}
             </span>
           ))}
           {tags.length > 3 && (
-            <span className="text-xs px-2 py-1 bg-gray-800 text-gray-500 rounded-full border border-gray-700">
+            <span className="text-sm px-2.5 py-1 bg-gray-800 text-gray-500 rounded-full border border-gray-700">
               +{tags.length - 3}
             </span>
           )}

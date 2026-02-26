@@ -196,6 +196,18 @@ const QUESTIONS: Record<string, { q: string, options: string[], answer: number, 
     ]
 };
 
+function getQuestionsForTrack(track: string) {
+    if (track === 'all') {
+        return [
+            ...(QUESTIONS.cloud || []).slice(0, 3),
+            ...(QUESTIONS.dataengineer || []).slice(0, 3),
+            ...(QUESTIONS.gamedev || []).slice(0, 3),
+            ...(QUESTIONS['software-engineer'] || []).slice(0, 3),
+        ];
+    }
+    return QUESTIONS[track] || [];
+}
+
 export default function TrackQuiz({ track }: QuizProps) {
     const [selected, setSelected] = useState<number | null>(null);
     const [status, setStatus] = useState<'idle' | 'correct' | 'wrong' | 'completed'>('idle');
@@ -203,7 +215,7 @@ export default function TrackQuiz({ track }: QuizProps) {
     const [totalEarned, setTotalEarned] = useState(0);
     
     // Pick a question based on index
-    const questions = QUESTIONS[track] || [];
+    const questions = getQuestionsForTrack(track);
     const question = questions[questionIndex];
 
     if (!question) return null;

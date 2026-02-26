@@ -5,6 +5,7 @@ interface Props {
 }
 
 const { title, track } = Astro.props;
+
 import HUD from '../components/game/HUD';
 import Miku from '../components/game/Miku';
 import ContactForm from '../components/ContactForm';
@@ -12,7 +13,9 @@ import Shop from '../components/game/Shop';
 import GameEffects from '../components/game/GameEffects';
 import NavBar from '../components/NavBar.astro';
 import AnimatedBackground from '../components/AnimatedBackground';
+import { isFunDomain } from '../utils/domain';
 import '../styles/global.css';
+let showFun = isFunDomain(Astro.url.hostname);
 ---
 
 <!doctype html>
@@ -35,11 +38,13 @@ import '../styles/global.css';
         <!-- Navigation -->
         <NavBar track={track} />
 
-        <!-- Gamification Layer -->
-        <HUD client:only="react" />
-        <Miku client:only="react" />
-        <Shop client:only="react" />
-        <GameEffects client:only="react" />
+				<!-- Gamification Layer (only in 'all' domain) -->
+				{showFun && <>
+					<HUD client:only="react" />
+					<Miku client:only="react" />
+					<Shop client:only="react" />
+					<GameEffects client:only="react" />
+				</>}
         
         <!-- Global Contact Form (Floating) -->
         <ContactForm client:load />

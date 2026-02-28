@@ -64,9 +64,32 @@ Section order config:
 - `npm run domain:cloudflare:init`
 - `npm run domain:cloudflare:plan`
 - `npm run domain:cloudflare:apply`
+- `npm run ship`
+- `npm run ship:full`
 - `npm run resume:private:scaffold`
 - `npm run resume:private -- <track>`
 - `npm run resume:private`
+
+## One-Command Ship Pipeline
+
+Script:
+- `scripts/release-automation.mjs`
+
+Safe default:
+- `npm run ship`
+- Runs preflight, `astro check`, `build`, and Cloudflare `plan`.
+- Does not commit/push unless you pass a commit message.
+
+Full automation:
+- `npm run ship:full -- --message "your commit message" --push`
+- Runs preflight, checks/build, Cloudflare `apply`, `git add -A`, commit, then push.
+
+Fail-safes:
+- Hard-fails if any file under `private/` is tracked by git.
+- Hard-fails if any staged file is under `private/`.
+- Cloudflare mode is explicit:
+  - `--cloudflare none|plan|apply`
+  - `ship` defaults to `plan`, `ship:full` defaults to `apply`.
 
 ## Notes
 

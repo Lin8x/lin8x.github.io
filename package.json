@@ -13,6 +13,7 @@
     "domain:cloudflare:init": "node scripts/init-cloudflare-sync-config.mjs",
     "domain:cloudflare:plan": "node --import tsx scripts/sync-cloudflare-routes.mjs",
     "domain:cloudflare:apply": "node --import tsx scripts/sync-cloudflare-routes.mjs --apply",
+    "doctor": "node scripts/doctor.mjs",
     "ship": "node scripts/release-automation.mjs",
     "ship:full": "node scripts/release-automation.mjs --cloudflare apply",
     "resume:private:scaffold": "node --import tsx scripts/scaffold-private-resume.mjs",

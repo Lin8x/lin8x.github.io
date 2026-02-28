@@ -64,6 +64,7 @@ Section order config:
 - `npm run domain:cloudflare:init`
 - `npm run domain:cloudflare:plan`
 - `npm run domain:cloudflare:apply`
+- `npm run doctor`
 - `npm run ship`
 - `npm run ship:full`
 - `npm run resume:private:scaffold`
@@ -90,6 +91,17 @@ Fail-safes:
 - Cloudflare mode is explicit:
   - `--cloudflare none|plan|apply`
   - `ship` defaults to `plan`, `ship:full` defaults to `apply`.
+
+## Doctor Check
+
+- `npm run doctor`
+- Verifies:
+  - required npm scripts exist
+  - syntax validity of private/release automation scripts
+  - `private/` is gitignored and not tracked
+  - private JSON configs are valid
+  - release automation smoke test runs in safe mode
+  - Cloudflare plan smoke test (when config is present)
 
 ## Notes
 

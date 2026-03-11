@@ -70,7 +70,6 @@ export const TRACKS: TrackDefinition[] = [
     desc: 'IT operations and infrastructure administration.',
     roleTitle: 'IT Engineer',
     roleAliases: ['Junior System Administrator', 'System Administrator'],
-    contentSource: 'cloud',
     domainAliases: ['it'],
   },
 ];
@@ -127,4 +126,20 @@ export function getTrackFromSubdomain(subdomain: string): TrackKey {
     (track.domainAliases || [track.slug]).map((alias) => alias.toLowerCase()).includes(normalized)
   );
   return match?.key || 'all';
+}
+
+export function getPrimarySubdomainForTrack(trackKey: TrackKey): string {
+  const track = TRACKS_BY_KEY[trackKey];
+  if (!track) return 'software-engineer';
+  if (track.key === 'all') return 'software-engineer';
+  const aliases = Array.isArray(track.domainAliases) && track.domainAliases.length
+    ? track.domainAliases
+    : [track.slug];
+  return String(aliases[0] || track.slug).toLowerCase().trim();
+}
+
+export function getTrackWebsiteHost(trackKey: TrackKey, apexDomain = 'danieljalali.com'): string {
+  const subdomain = getPrimarySubdomainForTrack(trackKey);
+  const normalizedApex = String(apexDomain || 'danieljalali.com').toLowerCase().trim();
+  return `${subdomain}.${normalizedApex}`;
 }

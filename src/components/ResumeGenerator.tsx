@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { FileDown, Loader2, ChevronDown } from 'lucide-react';
-import { PROFESSIONAL_TRACKS, resolveTrackContentKey, type TrackKey } from '../data/tracks';
+import { PROFESSIONAL_TRACKS, resolveTrackContentKey, getTrackWebsiteHost, type TrackKey } from '../data/tracks';
 import { ResumeDocument, type ResumeData, trackNames } from './resume/ResumeDocument';
 
 // Main Component with Download Button
@@ -42,7 +42,11 @@ function ResumeDownloadLink({
       const education = portfolio.degrees;
       const projects = projectsModule.getProjectsForTrack(contentTrack);
       const contactInfo = personalModule.contactInfo;
-      const summary = personalModule.professionalSummaries[contentTrack] || personalModule.professionalSummaries['software-engineer'];
+      const website = getTrackWebsiteHost(trackKey as TrackKey);
+      const summary =
+        personalModule.professionalSummaries[trackKey] ||
+        personalModule.professionalSummaries[contentTrack] ||
+        personalModule.professionalSummaries['software-engineer'];
       const experience = personalModule.getExperienceForTrack ? 
         personalModule.getExperienceForTrack(contentTrack) : [];
       
@@ -54,7 +58,10 @@ function ResumeDownloadLink({
         education,
         courses,
         experience,
-        contactInfo,
+        contactInfo: {
+          ...contactInfo,
+          website,
+        },
         summary,
       });
       setIsLoading(false);

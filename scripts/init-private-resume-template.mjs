@@ -13,6 +13,8 @@ function buildTemplate() {
   const tracks = Object.fromEntries(TRACKS.map((track) => [track, emptyTrackTemplate()]));
   return {
     contact: {},
+    experienceCompanies: [],
+    volunteerCompanies: [],
     tracks,
   };
 }

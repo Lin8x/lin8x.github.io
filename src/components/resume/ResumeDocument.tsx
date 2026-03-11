@@ -368,7 +368,7 @@ export const ResumeDocument = ({ data }: { data: ResumeData }) => {
         })}
 
         <Text style={styles.footer}>
-          Generated from danieljalali.com - {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+          Generated from {sanitizeText(data.contactInfo.website)} - {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
         </Text>
       </Page>
     </Document>

@@ -12,7 +12,10 @@ This project keeps private resume inputs local-only.
 - `npm run resume:private:scaffold`
   - Auto-generates `private/private-resume.json`
   - Creates a timestamped backup if file already exists
-  - Pre-fills contact and experience rows with `company: "REPLACEME"`
+  - Pre-fills contact and a single global `experienceCompanies` list with `company: "REPLACEME"`
+  - Splits entries into `experienceCompanies` and `volunteerCompanies`
+  - Orders entries newest-to-oldest without exposing dates
+  - Adds a one-line `hint` from the experience bullets so similar roles are easier to identify
 
 - `npm run resume:private -- cloud`
   - Generates one private PDF resume
@@ -30,6 +33,22 @@ Edit only `private/private-resume.json`:
     "email": "private-email@domain.com",
     "linkedin": "linkedin.com/in/your-private-profile"
   },
+  "experienceCompanies": [
+    {
+      "entity": "Private Software Company",
+      "role": "Software Engineering Intern",
+      "hint": "Created internal automation software using Python, JavaScript, and C#.",
+      "company": "Actual Company Name"
+    }
+  ],
+  "volunteerCompanies": [
+    {
+      "entity": "Educational Nonprofit / Club",
+      "role": "Volunteer Role Example",
+      "hint": "One-line role context to help identify this entry.",
+      "company": "Actual Organization Name"
+    }
+  ],
   "tracks": {
     "cloud": {
       "experience": [
@@ -44,9 +63,16 @@ Edit only `private/private-resume.json`:
 }
 ```
 
-Matching rules for experience patches:
+Matching rules for experience patches (`experienceCompanies`, `volunteerCompanies`, and `tracks.<track>.experience`):
 - Preferred: `entity` + `role`
 - Legacy fallback: `matchTitle`
+
+Priority:
+- `experienceCompanies` and `volunteerCompanies` apply first across all tracks
+- `tracks.<track>.experience` applies second and can override a specific track only
+
+Note:
+- `hint` is scaffold-only metadata to help identify roles; it is ignored by PDF generation.
 
 ## Organization Type Source
 

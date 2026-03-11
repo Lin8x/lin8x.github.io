@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const DEFAULT_DOMAIN = 'danieljalali.com';
+const DEFAULT_DOMAIN = 'www.danieljalali.com';
 
 async function main() {
   const root = process.cwd();

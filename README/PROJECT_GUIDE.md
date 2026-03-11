@@ -172,6 +172,7 @@ Config file (local-only, in gitignored folder):
   - `cname_target`
   - `redirect_base_url`
   - `redirect_status_code`
+  - `apex_redirect_target` (optional; examples: `/cloud`, `cloud.danieljalali.com`, `https://cloud.danieljalali.com`)
   - `manage_redirects` (`false` = DNS-only sync, recommended default)
   - `manage_access_public_bypass` (`true` = auto-create public Access bypass apps for track subdomains)
   - `proxied`

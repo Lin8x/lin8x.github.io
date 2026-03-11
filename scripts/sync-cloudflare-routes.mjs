@@ -5,6 +5,7 @@ import tracksModule from '../src/data/tracks.ts';
 
 const { TRACKS, PROFESSIONAL_TRACK_KEYS } = tracksModule;
 const MANAGED_RULE_PREFIX = 'managed-track-redirect:';
+const MANAGED_APEX_RULE = 'managed-apex-redirect';
 const API_BASE = 'https://api.cloudflare.com/client/v4';
 
 function parseArgs(argv) {
@@ -40,9 +41,52 @@ async function loadConfig(root) {
     redirect_status_code: cfg.redirect_status_code || 301,
     manage_redirects: typeof cfg.manage_redirects === 'boolean' ? cfg.manage_redirects : false,
     manage_access_public_bypass: typeof cfg.manage_access_public_bypass === 'boolean' ? cfg.manage_access_public_bypass : false,
+    apex_redirect_target: cfg.apex_redirect_target || '',
     proxied: typeof cfg.proxied === 'boolean' ? cfg.proxied : true,
     enabled_tracks: Array.isArray(cfg.enabled_tracks) ? cfg.enabled_tracks : [],
   };
+}
+
+function normalizeApexRedirectTarget(config) {
+  const raw = String(config.apex_redirect_target || '').trim();
+  if (!raw) return '';
+
+  if (/^https?:\/\//i.test(raw)) {
+    return raw;
+  }
+
+  if (raw.startsWith('/')) {
+    const base = String(config.redirect_base_url || `https://${config.apex_domain}`).replace(/\/+$/, '');
+    return `${base}${raw}`;
+  }
+
+  return `https://${raw}`;
+}
+
+function escapeCfString(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
+function getHostAndPath(targetUrl) {
+  try {
+    const parsed = new URL(targetUrl);
+    const host = String(parsed.host || '').toLowerCase();
+    const pathname = parsed.pathname || '/';
+    return { host, pathname };
+  } catch {
+    return { host: '', pathname: '/' };
+  }
+}
+
+function getUrlHost(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  try {
+    const withProto = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    return String(new URL(withProto).host || '').toLowerCase();
+  } catch {
+    return '';
+  }
 }
 
 function getAccessScopePath(accountId, zoneId) {
@@ -180,14 +224,14 @@ async function getOrCreateRedirectRuleset(config, apply) {
 function buildRedirectRule(item, config) {
   return {
     action: 'redirect',
-    expression: `http.host eq \"${item.fqdn}\"`,
-    description: `${MANAGED_RULE_PREFIX}${item.subdomain}`,
+    expression: item.expression || `http.host eq \"${item.host}\"`,
+    description: item.description,
     enabled: true,
     action_parameters: {
       from_value: {
         status_code: Number(config.redirect_status_code) || 301,
         target_url: {
-          value: `${config.redirect_base_url}${item.path}`,
+          value: item.target_url,
         },
         preserve_query_string: true,
       },
@@ -195,25 +239,66 @@ function buildRedirectRule(item, config) {
   };
 }
 
-async function upsertRedirectRules(config, desired, apply) {
+function buildDesiredRedirectEntries(config, desiredTracks) {
+  const entries = desiredTracks.map((item) => ({
+    host: item.fqdn,
+    description: `${MANAGED_RULE_PREFIX}${item.subdomain}`,
+    target_url: `${config.redirect_base_url}${item.path}`,
+    item,
+  }));
+
+  const apexTarget = normalizeApexRedirectTarget(config);
+  if (apexTarget) {
+    const targetMeta = getHostAndPath(apexTarget);
+    if (targetMeta.host === String(config.apex_domain).toLowerCase() && targetMeta.pathname === '/') {
+      throw new Error(
+        'Invalid apex_redirect_target: target resolves to apex root and would cause a redirect loop.'
+      );
+    }
+    // Important: only redirect apex root path. Redirecting all apex paths would also catch
+    // static assets (e.g. /_astro/*.css) and break page rendering.
+    const expression =
+      `http.host eq \"${escapeCfString(config.apex_domain)}\" and http.request.uri.path eq \"/\"`;
+
+    entries.push({
+      host: config.apex_domain,
+      expression,
+      description: MANAGED_APEX_RULE,
+      target_url: apexTarget,
+      item: {
+        trackKey: 'apex',
+        subdomain: '@',
+        fqdn: config.apex_domain,
+        path: apexTarget,
+      },
+    });
+  }
+
+  return entries;
+}
+
+async function upsertRedirectRules(config, redirectEntries, apply) {
   const ruleset = await getOrCreateRedirectRuleset(config, apply);
   const existingRules = ruleset?.rules || [];
 
   const byDescription = new Map(
     existingRules
-      .filter((rule) => String(rule.description || '').startsWith(MANAGED_RULE_PREFIX))
+      .filter((rule) => {
+        const desc = String(rule.description || '');
+        return desc.startsWith(MANAGED_RULE_PREFIX) || desc === MANAGED_APEX_RULE;
+      })
       .map((rule) => [rule.description, rule])
   );
 
   const actions = [];
   const updatedRules = [...existingRules];
 
-  for (const item of desired) {
-    const desiredRule = buildRedirectRule(item, config);
+  for (const entry of redirectEntries) {
+    const desiredRule = buildRedirectRule(entry, config);
     const existing = byDescription.get(desiredRule.description);
 
     if (!existing) {
-      actions.push({ type: 'create_rule', item, description: desiredRule.description });
+      actions.push({ type: 'create_rule', item: entry.item, description: desiredRule.description });
       if (apply) updatedRules.push(desiredRule);
       continue;
     }
@@ -225,7 +310,7 @@ async function upsertRedirectRules(config, desired, apply) {
       existing.enabled !== desiredRule.enabled;
 
     if (changed) {
-      actions.push({ type: 'update_rule', item, description: desiredRule.description });
+      actions.push({ type: 'update_rule', item: entry.item, description: desiredRule.description });
       if (apply) {
         const idx = updatedRules.findIndex((r) => r.id === existing.id);
         if (idx >= 0) {
@@ -233,7 +318,7 @@ async function upsertRedirectRules(config, desired, apply) {
         }
       }
     } else {
-      actions.push({ type: 'noop_rule', item, description: desiredRule.description });
+      actions.push({ type: 'noop_rule', item: entry.item, description: desiredRule.description });
     }
   }
 
@@ -337,6 +422,27 @@ async function upsertAccessPublicBypass(config, desired, apply) {
   return actions;
 }
 
+function buildDesiredAccessEntries(config, desiredTrackEntries) {
+  const byFqdn = new Map(desiredTrackEntries.map((item) => [String(item.fqdn).toLowerCase(), item]));
+
+  const extraHosts = [
+    String(config.apex_domain || '').toLowerCase().trim(),
+    getUrlHost(config.redirect_base_url),
+  ].filter(Boolean);
+
+  for (const host of extraHosts) {
+    if (byFqdn.has(host)) continue;
+    byFqdn.set(host, {
+      trackKey: 'public',
+      subdomain: host === String(config.apex_domain).toLowerCase() ? '@' : host.split('.')[0] || 'public',
+      fqdn: host,
+      path: '',
+    });
+  }
+
+  return [...byFqdn.values()];
+}
+
 async function resolveAccessAccountId(config) {
   if (String(config.access_account_id || '').trim()) {
     return String(config.access_account_id).trim();
@@ -380,10 +486,11 @@ async function main() {
 
   const desired = buildDesiredEntries(trackDefs, config);
   const dnsActions = await upsertDnsRecords(config, desired, args.apply);
+  const redirectEntries = buildDesiredRedirectEntries(config, desired);
   let ruleActions;
   if (config.manage_redirects) {
     try {
-      ruleActions = await upsertRedirectRules(config, desired, args.apply);
+      ruleActions = await upsertRedirectRules(config, redirectEntries, args.apply);
     } catch (err) {
       const msg = String(err?.message || '');
       const unauthorized = msg.includes('/rulesets') && msg.toLowerCase().includes('not authorized');
@@ -392,14 +499,15 @@ async function main() {
         'Warning: missing Cloudflare ruleset permission; skipping redirect rule sync. ' +
         'DNS and Access sync will continue.'
       );
-      ruleActions = desired.map((item) => ({ type: 'skipped_rule_auth', item, description: `${MANAGED_RULE_PREFIX}${item.subdomain}` }));
+      ruleActions = redirectEntries.map((entry) => ({ type: 'skipped_rule_auth', item: entry.item, description: entry.description }));
     }
   } else {
-    ruleActions = desired.map((item) => ({ type: 'skipped_rule', item, description: `${MANAGED_RULE_PREFIX}${item.subdomain}` }));
+    ruleActions = redirectEntries.map((entry) => ({ type: 'skipped_rule', item: entry.item, description: entry.description }));
   }
+  const desiredAccessEntries = buildDesiredAccessEntries(config, desired);
   const accessActions = config.manage_access_public_bypass
-    ? await upsertAccessPublicBypass(config, desired, args.apply)
-    : desired.map((item) => ({ type: 'skipped_access', item }));
+    ? await upsertAccessPublicBypass(config, desiredAccessEntries, args.apply)
+    : desiredAccessEntries.map((item) => ({ type: 'skipped_access', item }));
 
   printPlan(desired, dnsActions, ruleActions, args.apply);
   console.log('Access actions:', accessActions.reduce((acc, item) => {

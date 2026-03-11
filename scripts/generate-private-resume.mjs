@@ -9,7 +9,7 @@ import projectsModule from '../src/data/resumeProjects.ts';
 import personalModule from '../src/data/personal.ts';
 import resumeDocModule from '../src/components/resume/ResumeDocument.tsx';
 
-const { TRACKS_BY_KEY, resolveTrackContentKey, PROFESSIONAL_TRACK_KEYS } = tracksModule;
+const { TRACKS_BY_KEY, resolveTrackContentKey, getTrackWebsiteHost, PROFESSIONAL_TRACK_KEYS } = tracksModule;
 const { getSkillsForTrack, getCertificationsForTrack, courseMap, degrees } = portfolioModule;
 const { getProjectsForTrack } = projectsModule;
 const { contactInfo, professionalSummaries, getExperienceForTrack } = personalModule;
@@ -244,6 +244,7 @@ function applyExperienceOverrides(items, overrides) {
 
 function buildPublicResumeData(track) {
   const contentTrack = resolveTrackContentKey(track);
+  const website = getTrackWebsiteHost(track);
   return {
     track,
     skills: getSkillsForTrack(contentTrack).map((s) => ({ name: s.name })),
@@ -276,16 +277,29 @@ function buildPublicResumeData(track) {
       endDate: e.endDate,
       bullets: e.bullets,
     })),
-    contactInfo,
-    summary: professionalSummaries[contentTrack] || professionalSummaries['software-engineer'] || '',
+    contactInfo: {
+      ...contactInfo,
+      website,
+    },
+    summary:
+      professionalSummaries[track] ||
+      professionalSummaries[contentTrack] ||
+      professionalSummaries['software-engineer'] ||
+      '',
     title: TRACKS_BY_KEY[track]?.name || track,
   };
 }
 
 function mergeWithPrivateOverrides(base, privateData, track) {
   const trackOverrides = privateData?.tracks?.[track] || {};
-
-  const contact = { ...base.contactInfo, ...(privateData.contact || {}) };
+  const trackWebsite = getTrackWebsiteHost(track);
+  const contactOverrides = { ...(privateData.contact || {}) };
+  delete contactOverrides.website;
+  const contact = {
+    ...base.contactInfo,
+    ...contactOverrides,
+    website: trackWebsite,
+  };
 
   const skills = applyNamedObjectListOverride(
     base.skills,
@@ -302,7 +316,30 @@ function mergeWithPrivateOverrides(base, privateData, track) {
   );
 
   const projects = applyProjectOverrides(base.projects, trackOverrides.projects);
-  const experience = applyExperienceOverrides(base.experience, trackOverrides.experience);
+  const globalExperienceEntries = [
+    ...asArray(privateData?.experienceCompanies),
+    ...asArray(privateData?.volunteerCompanies),
+  ];
+  const globalExperienceCompanyOverrides = asArray(
+    globalExperienceEntries.length ? globalExperienceEntries : privateData?.experience
+  )
+    .map((item) => {
+      if (!item || typeof item !== 'object') return null;
+      const patch = { ...item };
+      delete patch.tracks;
+      delete patch.hint;
+      delete patch.note;
+      delete patch.notes;
+      return patch;
+    })
+    .filter(Boolean);
+
+  const globallyPatchedExperience = applyExperienceOverrides(
+    base.experience,
+    globalExperienceCompanyOverrides
+  );
+
+  const experience = applyExperienceOverrides(globallyPatchedExperience, trackOverrides.experience);
   const education = applyItemOverrides(base.education, trackOverrides.education, 'title');
 
   return {

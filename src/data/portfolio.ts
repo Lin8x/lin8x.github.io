@@ -33,42 +33,42 @@ export interface Degree {
 // ----------------------------------------------------------------------
 export const allSkills: Skill[] = [
   // === CLOUD PLATFORMS ===
-  { name: 'AWS', icon: '/images/logos/aws.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'Azure', icon: '/images/logos/azure.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
+  { name: 'AWS', icon: '/images/logos/aws.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'Azure', icon: '/images/logos/azure.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
   
   // === AZURE SERVICES ===
-  { name: 'Azure SQL', icon: '/images/logos/azuresql.png', tags: ['cloud', 'dataengineer'] },
-  { name: 'Azure CosmosDB', icon: '/images/logos/azurecosmosdb.png', tags: ['cloud', 'dataengineer'] },
-  { name: 'Azure Files', icon: '/images/logos/azurefiles.png', tags: ['cloud', 'dataengineer'] },
-  { name: 'Azure Blob Storage', icon: '/images/logos/azureblobstorage.png', tags: ['cloud', 'dataengineer'] },
+  { name: 'Azure SQL', icon: '/images/logos/azuresql.png', tags: ['cloud', 'dataengineer', 'it'] },
+  { name: 'Azure CosmosDB', icon: '/images/logos/azurecosmosdb.png', tags: ['cloud', 'dataengineer', 'it'] },
+  { name: 'Azure Files', icon: '/images/logos/azurefiles.png', tags: ['cloud', 'dataengineer', 'it'] },
+  { name: 'Azure Blob Storage', icon: '/images/logos/azureblobstorage.png', tags: ['cloud', 'dataengineer', 'it'] },
   { name: 'Azure Synapse', icon: '/images/logos/azuresynapseanalytics.png', tags: ['dataengineer'] },
   { name: 'Databricks', icon: '/images/logos/azuredatabricks.png', tags: ['dataengineer'] },
   { name: 'Data Factory', icon: '/images/logos/azuredatafactory.webp', tags: ['dataengineer'] },
   { name: 'Azure Data Lake', icon: '/images/logos/azuredatalake.png', tags: ['dataengineer'] },
   
   // === DEVOPS & TOOLS ===
-  { name: 'Docker', icon: '/images/logos/docker.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'Git', icon: '/images/logos/git.png', tags: ['cloud', 'dataengineer', 'gamedev', 'software-engineer'] },
-  { name: 'Grafana', icon: '/images/logos/grafana.png', tags: ['cloud', 'dataengineer'] },
+  { name: 'Docker', icon: '/images/logos/docker.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'Git', icon: '/images/logos/git.png', tags: ['cloud', 'dataengineer', 'gamedev', 'software-engineer', 'it'] },
+  { name: 'Grafana', icon: '/images/logos/grafana.png', tags: ['cloud', 'dataengineer', 'it'] },
   
   // === LINUX / OS ===
-  { name: 'Ubuntu', icon: '/images/logos/ubuntu.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'Fedora', icon: '/images/logos/fedora.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'Debian', icon: '/images/logos/debian.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'AWS Linux', icon: '/images/logos/aws-linux.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'Kali Linux', icon: '/images/logos/kali-linux.png', tags: ['software-engineer'] },
-  { name: 'Windows Server', icon: '/images/logos/windows.png', tags: ['cloud', 'software-engineer'] },
-  { name: 'macOS', icon: '/images/logos/macos.png', tags: ['gamedev', 'software-engineer'] },
+  { name: 'Ubuntu', icon: '/images/logos/ubuntu.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'Fedora', icon: '/images/logos/fedora.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'Debian', icon: '/images/logos/debian.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'AWS Linux', icon: '/images/logos/aws-linux.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'Kali Linux', icon: '/images/logos/kali-linux.png', tags: ['software-engineer', 'it'] },
+  { name: 'Windows Server', icon: '/images/logos/windows.png', tags: ['cloud', 'software-engineer', 'it'] },
+  { name: 'macOS', icon: '/images/logos/macos.png', tags: ['gamedev', 'software-engineer', 'it'] },
   
   // === PROGRAMMING LANGUAGES ===
-  { name: 'Python', icon: '/images/logos/python.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'C#', icon: '/images/logos/csharp.svg', tags: ['gamedev', 'software-engineer'] },
+  { name: 'Python', icon: '/images/logos/python.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'C#', icon: '/images/logos/csharp.svg', tags: ['gamedev', 'software-engineer', 'it'] },
   { name: 'C++', icon: '/images/logos/cplusplus.png', tags: ['gamedev', 'software-engineer'] },
   
   // === DATABASES ===
   { name: 'MongoDB', icon: '/images/logos/mongodb.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'MySQL', icon: '/images/logos/mysql.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
-  { name: 'PostgreSQL', icon: '/images/logos/postgresql.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
+  { name: 'MySQL', icon: '/images/logos/mysql.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
+  { name: 'PostgreSQL', icon: '/images/logos/postgresql.png', tags: ['cloud', 'dataengineer', 'software-engineer', 'it'] },
   { name: 'SQL Server', icon: '/images/logos/sqlserver.png', tags: ['cloud', 'dataengineer', 'software-engineer'] },
   
   // === DATA SCIENCE / ML ===
@@ -95,8 +95,8 @@ export const allSkills: Skill[] = [
   { name: 'UdonSharp', icon: '/images/logos/udonsharp.png', tags: ['gamedev'] },
   
   // === MOBILE ===
-  { name: 'Android', icon: '/images/logos/android.png', tags: ['gamedev', 'software-engineer'] },
-  { name: 'iOS', icon: '/images/logos/ios.png', tags: ['gamedev'] },
+  { name: 'Android', icon: '/images/logos/android.png', tags: ['gamedev', 'software-engineer', 'it'] },
+  { name: 'iOS', icon: '/images/logos/ios.png', tags: ['gamedev', 'it'] },
   { name: 'Xcode', icon: '/images/logos/xcode.png', tags: ['gamedev'] },
   
   // === TESTING / AUTOMATION ===
@@ -121,7 +121,7 @@ export const allCertifications: Certification[] = [
     type: 'certification', 
     url: 'https://www.credly.com/earner/earned/badge/c1e3afb5-38fb-4475-a0cf-b4dc49c0f761',
     credentialId: 'c1e3afb5-38fb-4475-a0cf-b4dc49c0f761',
-    tags: ['cloud', 'dataengineer', 'software-engineer']
+    tags: ['cloud', 'dataengineer', 'software-engineer', 'it']
   },
   { 
     name: 'Azure Data Fundamentals', 
@@ -131,7 +131,7 @@ export const allCertifications: Certification[] = [
     type: 'certification', 
     url: 'https://learn.microsoft.com/api/credentials/share/en-us/DanielJalali-3160/8EC56E591D97D935?sharingId=317DD6E71A4EAF6',
     credentialId: '8EC56E591D97D935',
-    tags: ['cloud', 'dataengineer', 'software-engineer']
+    tags: ['cloud', 'dataengineer', 'software-engineer', 'it']
   },
   { 
     name: 'Unity Certified User: Programmer', 
@@ -141,7 +141,7 @@ export const allCertifications: Certification[] = [
     type: 'certification', 
     credentialId: '25428506-16d7-4507-8cc2-95bc7d83b3a4',
     url: 'https://www.credly.com/earner/earned/badge/25428506-16d7-4507-8cc2-95bc7d83b3a4',
-    tags: ['gamedev', 'cloud', 'dataengineer', 'software-engineer']
+    tags: ['gamedev', 'cloud', 'dataengineer', 'software-engineer', 'it']
   },
   { 
     name: 'MTA: Windows Operating System Fundamentals', 
@@ -151,7 +151,7 @@ export const allCertifications: Certification[] = [
     type: 'certification',
     credentialId: '11b4058d-5168-45e1-9035-1f6c4146ad2a',
     url: 'https://www.credly.com/earner/earned/badge/11b4058d-5168-45e1-9035-1f6c4146ad2a',
-    tags: ['cloud', 'software-engineer']
+    tags: ['cloud', 'software-engineer', 'it']
   },
   { 
     name: 'Microsoft Office Specialist: Word (Office 2016)', 
@@ -171,7 +171,7 @@ export const allCertifications: Certification[] = [
     image: '/images/coursework/mastering-visual-studio.jpg', 
     status: 'completed', 
     type: 'course',
-    tags: ['cloud', 'dataengineer', 'gamedev', 'software-engineer']
+    tags: ['cloud', 'dataengineer', 'gamedev', 'software-engineer', 'it']
   },
   { 
     name: 'JS Basics for Beginners', 
@@ -179,7 +179,7 @@ export const allCertifications: Certification[] = [
     image: '/images/coursework/javascript.png', 
     status: 'completed', 
     type: 'course',
-    tags: ['software-engineer']
+    tags: ['software-engineer', 'it']
   },
   { 
     name: 'The Complete Python Bootcamp From Zero to Hero in Python', 
@@ -187,7 +187,7 @@ export const allCertifications: Certification[] = [
     image: '/images/coursework/python-zero-to-hero.jpg', 
     status: 'in-progress', 
     type: 'course',
-    tags: ['cloud', 'dataengineer', 'software-engineer']
+    tags: ['cloud', 'dataengineer', 'software-engineer', 'it']
   },
   { 
     name: 'Python for Data Science and Machine Learning Bootcamp', 
@@ -195,7 +195,7 @@ export const allCertifications: Certification[] = [
     image: '/images/coursework/machine-learning.jpg', 
     status: 'completed', 
     type: 'course',
-    tags: ['cloud', 'dataengineer', 'software-engineer']
+    tags: ['cloud', 'dataengineer', 'software-engineer', 'it']
   },
   { 
     name: 'Python Data Structures & Algorithms', 
@@ -203,7 +203,7 @@ export const allCertifications: Certification[] = [
     image: '/images/coursework/python-data-struct.jpg', 
     status: 'completed', 
     type: 'course',
-    tags: ['software-engineer']
+    tags: ['software-engineer', 'it']
   },
   { 
     name: 'Flutter & Dart - The Complete Guide', 
@@ -239,7 +239,15 @@ export const courseMap: Record<string, Course[]> = {
     { name: 'Computer Architecture' },
     { name: 'Database Management' },
     { name: 'Technology in the Global Arena' },
-    { name: 'Linux System Administration' }
+  ],
+  'it': [
+    { name: 'Operating Systems' },
+    { name: 'Systems Programing' },
+    { name: 'Computer Architecture' },
+    { name: 'Database Management' },
+    { name: 'Technology in the Global Arena' },
+    { name: 'Advanced Windows Programming' },
+    { name: 'Digital Forensics' },
   ],
   'dataengineer': [
     { name: 'Database Management' },
@@ -285,7 +293,6 @@ export const degrees: Degree[] = [
             "Programming II",
             "Data Structures",
             "Systems Programing",
-            "Linux System Administration",
             "Operating Systems",
             "Pre-Calculus: Algebra & Trigonometry",
             "Professional & Technical Writing",

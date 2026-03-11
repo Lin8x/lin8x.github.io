@@ -29,6 +29,7 @@ export const professionalSummaries: Record<string, string> = {
     'dataengineer': "Data Engineer skilled in building ETL pipelines, data warehousing, and analytics infrastructure. Experience with Python, SQL databases, and data visualization tools. Passionate about transforming raw data into actionable insights.",
     'gamedev': "Game Developer with extensive Unity and Unreal Engine experience. Led teams of 10-20 developers through multiple game releases and game jams. Strong background in C#, Blueprint scripting, and cross-functional project management.",
     'software-engineer': "Software Engineer with diverse experience across cloud infrastructure, data engineering, and game development. Skilled in Python, C#, and modern DevOps practices. Passionate about building robust, user-focused applications.",
+    'it': "IT Engineer with hands-on experience in systems administration, infrastructure support, and technical operations. Skilled at improving reliability, maintaining secure environments, and resolving complex platform issues across cloud and on-prem setups.",
 };
 
 // ============================================
@@ -52,8 +53,8 @@ export const workExperience: WorkExperience[] = [
         organizationType: "University Research Lab",
         type: "part-time",
         startDate: "August 2022",
-        endDate: "September 2024",
-        tracks: ["gamedev", "software-engineer"],
+        endDate: "Present",
+        tracks: ["gamedev", "software-engineer", "it"],
         bullets: [
             "One of only two Unity developers entrusted with the creation of advanced AR and VR applications for architectural analysis and environmental data capture.",
             "Conducted research on complex APIs including the Lightship AR Development Kit and VPS.",
@@ -69,7 +70,7 @@ export const workExperience: WorkExperience[] = [
         type: "internship",
         startDate: "May 2024",
         endDate: "May 2024",
-        tracks: ["dataengineer", "software-engineer"],
+        tracks: ["dataengineer", "software-engineer", "it"],
         bullets: [
             "Conducted data analysis using Python with Seaborn and Matplotlib for advanced visualization.",
             "Developed prediction models to generate insightful reports for data-driven decisions.",
@@ -85,7 +86,7 @@ export const workExperience: WorkExperience[] = [
         type: "internship",
         startDate: "March 2024",
         endDate: "April 2024",
-        tracks: ["software-engineer", "cloud"],
+        tracks: ["software-engineer", "cloud", "it"],
         bullets: [
             "Managed MySQL database for efficient data storage and retrieval.",
             "Created internal automation software using Python, JavaScript, and C#.",

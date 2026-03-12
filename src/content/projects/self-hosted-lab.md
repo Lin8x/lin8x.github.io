@@ -3,7 +3,7 @@ title: "Self-Hosted Homelab & Data Infrastructure"
 description: "Rebuilt a Dell OptiPlex into a production-grade virtualization server hosting PostgreSQL, MySQL, and Jupyter environments, saving >$800 in Capex."
 date: "May 2025 – Present"
 tags: ["Ubuntu Server", "Docker", "PostgreSQL", "MySQL", "Jupyter Lab", "Grafana", "Prometheus", "Tailscale"]
-tracks: ["cloud", "dataengineer", "software-engineer"]
+tracks: ["cloud", "dataengineer", "software-engineer", "it"]
 featured: true
 ---
 

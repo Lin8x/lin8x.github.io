@@ -3,7 +3,7 @@ title: "Vendor Data Analysis System"
 description: "Comprehensive data pipeline collecting, transforming, and analyzing vendor sales data (Patreon/Gumroad) with automated currency normalization."
 date: "Sept 2024 – Dec 2024"
 tags: ["Python", "Selenium", "MySQL", "API Integration", "ETL"]
-tracks: ["dataengineer", "software-engineer"]
+tracks: ["dataengineer", "software-engineer", "it"]
 featured: true
 ---
 

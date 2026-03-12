@@ -16,7 +16,7 @@ export const allProjects: ResumeProject[] = [
     description: "Rebuilt a Dell OptiPlex into a production-grade virtualization server hosting PostgreSQL, MySQL, and Jupyter environments, saving >$800 in Capex.",
     date: "May 2025 – Present",
     tags: ["Ubuntu Server", "Docker", "PostgreSQL", "MySQL", "Jupyter Lab", "Grafana", "Prometheus", "Tailscale"],
-    tracks: ["cloud", "dataengineer", "software-engineer", 'it'],
+    tracks: ["cloud", "dataengineer", "software-engineer", "it"],
     featured: true,
   },
   {
@@ -24,7 +24,7 @@ export const allProjects: ResumeProject[] = [
     description: "Designed and operated a hybrid hosting platform for a real-time multiplayer service, combining home lab compute with AWS edge ingress for security and reliability. Supported 112 concurrent users.",
     date: "2023 – Present",
     tags: ["AWS", "EC2", "Ubuntu", "Proxmox", "Docker", "Python", "Cloudflare", "Networking"],
-    tracks: ["cloud", "software-engineer", 'it'],
+    tracks: ["cloud", "software-engineer", "it"],
     featured: true,
   },
   {
@@ -32,7 +32,7 @@ export const allProjects: ResumeProject[] = [
     description: "AWS-hosted Node.js application integrating Patreon API with OAuth 2.0 for real-time user tier management and syncing.",
     date: "July 2024 – Aug 2024",
     tags: ["AWS", "EC2", "Node.js", "MySQL", "OAuth 2.0", "JavaScript", "GitHub Actions"],
-    tracks: ["cloud", "software-engineer", 'it'],
+    tracks: ["cloud", "software-engineer", "it"],
     featured: true,
   },
   {
@@ -40,7 +40,7 @@ export const allProjects: ResumeProject[] = [
     description: "Comprehensive data pipeline collecting, transforming, and analyzing vendor sales data with automated currency normalization.",
     date: "Sept 2024 – Dec 2024",
     tags: ["Python", "Selenium", "MySQL", "API Integration", "ETL"],
-    tracks: ["dataengineer", "software-engineer", 'it'],
+    tracks: ["dataengineer", "software-engineer", "it"],
     featured: true,
   },
   {

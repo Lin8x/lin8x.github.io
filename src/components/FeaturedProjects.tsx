@@ -19,7 +19,7 @@ const featuredProjects: FeaturedProject[] = [
     {
         title: "Self-Hosted Homelab Infrastructure",
         description: "Production-grade virtualization server hosting PostgreSQL, MySQL, and Jupyter environments.",
-        image: "/images/projects/homelab.png",
+        image: "/images/projects/servers.jpg",
         tags: ["Docker", "PostgreSQL", "Grafana", "Ubuntu"],
         slug: "self-hosted-lab"
     },
@@ -63,13 +63,8 @@ export default function FeaturedProjects() {
                                 alt={project.title}
                                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                                 onError={(e) => {
-                                    // Fallback if image doesn't exist
                                     const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    target.parentElement!.classList.add('flex', 'items-center', 'justify-center');
-                                    const fallback = document.createElement('div');
-                                    fallback.innerHTML = '<span class="text-4xl">☁️</span>';
-                                    target.parentElement!.appendChild(fallback);
+                                    target.src = "/images/projects/servers.jpg";
                                 }}
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent"></div>

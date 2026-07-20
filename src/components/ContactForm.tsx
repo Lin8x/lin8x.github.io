@@ -78,19 +78,19 @@ export default function ContactForm() {
                 </button>
 
                 <h2 className="text-2xl font-bold text-white mb-2">Get in Touch</h2>
-                <p className="text-gray-400 mb-6 text-sm">Send a transmission to Daniel Jalali.</p>
+                <p className="text-gray-400 mb-6 text-sm">Use this form to contact Daniel Jalali about hiring, contract work, or general questions.</p>
 
                 {status === 'success' ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center animate-fade-in">
                         <CheckCircle size={64} className="text-brand-primary mb-4" />
-                        <h3 className="text-xl font-bold text-white">Transmission Sent</h3>
+                        <h3 className="text-xl font-bold text-white">Message Sent</h3>
                         <p className="text-gray-400">Thank you for reaching out.</p>
                     </div>
                 ) : (
                     <form ref={form} onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-xs font-mono text-gray-500 mb-1">IDENTIFIER (NAME)</label>
+                                <label className="block text-xs font-mono text-gray-500 mb-1">NAME</label>
                                 <input 
                                     type="text" 
                                     name="user_name" 
@@ -100,7 +100,7 @@ export default function ContactForm() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-mono text-gray-500 mb-1">RETURN ADDRESS (EMAIL)</label>
+                                <label className="block text-xs font-mono text-gray-500 mb-1">EMAIL</label>
                                 <input 
                                     type="email" 
                                     name="user_email" 
@@ -112,7 +112,7 @@ export default function ContactForm() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-mono text-gray-500 mb-1">AFFILIATION (COMPANY) <span className="opacity-50">- OPTION</span></label>
+                            <label className="block text-xs font-mono text-gray-500 mb-1">COMPANY <span className="opacity-50">- OPTIONAL</span></label>
                             <input 
                                 type="text" 
                                 name="company" 
@@ -134,7 +134,7 @@ export default function ContactForm() {
                         </div>
 
                         <div>
-                            <label className="block text-xs font-mono text-gray-500 mb-1">PAYLOAD (MESSAGE)</label>
+                            <label className="block text-xs font-mono text-gray-500 mb-1">MESSAGE</label>
                             <textarea 
                                 name="message" 
                                 required
@@ -162,10 +162,10 @@ export default function ContactForm() {
                             {status === 'sending' ? (
                                 <>
                                     <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
-                                    <span>Transmitting...</span>
+                                    <span>Sending...</span>
                                 </>
                             ) : (
-                                <span>Send Transmission</span>
+                                <span>Send Message</span>
                             )}
                         </button>
                     </form>

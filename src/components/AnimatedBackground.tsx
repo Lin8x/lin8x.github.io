@@ -30,9 +30,9 @@ export default function AnimatedBackground() {
       constructor(canvasWidth: number, canvasHeight: number) {
         this.x = Math.random() * canvasWidth;
         this.y = Math.random() * canvasHeight;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedY = Math.random() * 0.3 + 0.1;
-        this.opacity = Math.random() * 0.5 + 0.1;
+        this.size = Math.random() * 1.6 + 0.4;
+        this.speedY = Math.random() * 0.22 + 0.06;
+        this.opacity = Math.random() * 0.22 + 0.06;
         this.fadeDir = Math.random() > 0.5 ? 1 : -1;
       }
 
@@ -43,7 +43,7 @@ export default function AnimatedBackground() {
         }
         
         this.opacity += this.fadeDir * 0.005;
-        if (this.opacity >= 0.6 || this.opacity <= 0.1) {
+        if (this.opacity >= 0.28 || this.opacity <= 0.06) {
           this.fadeDir *= -1;
         }
       }
@@ -51,22 +51,22 @@ export default function AnimatedBackground() {
       draw(ctx: CanvasRenderingContext2D) {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 65, ${this.opacity})`;
+        ctx.fillStyle = `rgba(13, 187, 99, ${this.opacity})`;
         ctx.fill();
       }
     }
 
     const initParticles = () => {
       particles = [];
-      const count = Math.floor((canvas.width * canvas.height) / 15000);
+      const count = Math.floor((canvas.width * canvas.height) / 24000);
       for (let i = 0; i < count; i++) {
         particles.push(new Particle(canvas.width, canvas.height));
       }
     };
 
     const drawGrid = () => {
-      const gridSize = 60;
-      ctx.strokeStyle = 'rgba(0, 255, 65, 0.03)';
+      const gridSize = 72;
+      ctx.strokeStyle = 'rgba(90, 110, 140, 0.025)';
       ctx.lineWidth = 1;
 
       // Vertical lines
@@ -85,7 +85,7 @@ export default function AnimatedBackground() {
         ctx.stroke();
       }
 
-      gridOffset += 0.15;
+      gridOffset += 0.08;
     };
 
     const drawGlow = () => {
@@ -94,7 +94,7 @@ export default function AnimatedBackground() {
         canvas.width * 0.85, canvas.height * 0.15, 0,
         canvas.width * 0.85, canvas.height * 0.15, canvas.width * 0.4
       );
-      gradient1.addColorStop(0, 'rgba(0, 255, 65, 0.08)');
+      gradient1.addColorStop(0, 'rgba(13, 187, 99, 0.045)');
       gradient1.addColorStop(1, 'transparent');
       ctx.fillStyle = gradient1;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -104,7 +104,7 @@ export default function AnimatedBackground() {
         canvas.width * 0.1, canvas.height * 0.9, 0,
         canvas.width * 0.1, canvas.height * 0.9, canvas.width * 0.35
       );
-      gradient2.addColorStop(0, 'rgba(45, 108, 223, 0.05)');
+      gradient2.addColorStop(0, 'rgba(45, 108, 223, 0.08)');
       gradient2.addColorStop(1, 'transparent');
       ctx.fillStyle = gradient2;
       ctx.fillRect(0, 0, canvas.width, canvas.height);

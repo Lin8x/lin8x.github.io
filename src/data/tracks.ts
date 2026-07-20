@@ -1,5 +1,10 @@
 export type TrackKey = 'cloud' | 'dataengineer' | 'gamedev' | 'software-engineer' | 'it' | 'all';
 export type ResumeSectionKey = 'summary' | 'skills' | 'certifications' | 'projects' | 'experience' | 'education';
+export type ResumeSectionItemLimitKey = 'certifications';
+
+export const DEFAULT_RESUME_SECTION_ITEM_LIMITS: Record<ResumeSectionItemLimitKey, number> = {
+  certifications: 2,
+};
 
 export interface TrackDefinition {
   key: TrackKey;
@@ -14,6 +19,8 @@ export interface TrackDefinition {
   contentSource?: Exclude<TrackKey, 'all'>;
   // Optional subdomain aliases that map to this track (e.g., "swe" -> software-engineer).
   domainAliases?: string[];
+  // Optional per-section item limits for generated resumes.
+  resumeSectionItemLimits?: Partial<Record<ResumeSectionItemLimitKey, number>>;
 }
 
 export const TRACKS: TrackDefinition[] = [
@@ -43,6 +50,9 @@ export const TRACKS: TrackDefinition[] = [
     desc: 'Pipelines, ETL, and data warehousing.',
     roleTitle: 'Data Engineer',
     domainAliases: ['dataengineer', 'data'],
+    resumeSectionItemLimits: {
+      certifications: 3,
+    },
   },
   {
     key: 'gamedev',
@@ -71,6 +81,9 @@ export const TRACKS: TrackDefinition[] = [
     roleTitle: 'IT Engineer',
     roleAliases: ['Junior System Administrator', 'System Administrator'],
     domainAliases: ['it'],
+    resumeSectionItemLimits: {
+      certifications: 3,
+    },
   },
 ];
 
@@ -118,6 +131,20 @@ export function getTrackRoleTitle(trackKey: TrackKey, preferredAlias?: string): 
   }
 
   return track.roleTitle || track.name;
+}
+
+export function getResumeSectionItemLimit(
+  trackKey: TrackKey,
+  section: ResumeSectionItemLimitKey
+): number {
+  const track = TRACKS_BY_KEY[trackKey];
+  const configuredLimit = track?.resumeSectionItemLimits?.[section];
+
+  if (typeof configuredLimit === 'number' && configuredLimit >= 0) {
+    return configuredLimit;
+  }
+
+  return DEFAULT_RESUME_SECTION_ITEM_LIMITS[section];
 }
 
 export function getTrackFromSubdomain(subdomain: string): TrackKey {

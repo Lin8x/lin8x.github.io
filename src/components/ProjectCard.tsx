@@ -17,10 +17,20 @@ interface ProjectCardProps {
     docs?: string;
   };
   bodyHtml: string;
+  pinned?: boolean;
 }
 
-export default function ProjectCard({ title, description, problem, action, result, date, tags, image, links, bodyHtml }: ProjectCardProps) {
+export default function ProjectCard({ title, description, problem, action, result, date, tags, image, links, bodyHtml, pinned = false }: ProjectCardProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const cardClassName = [
+    "border rounded-2xl p-7 md:p-8 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 group h-full flex flex-col justify-between min-h-[320px]",
+    pinned
+      ? "project-card-pinned bg-gray-900 hover:border-amber-300/50 hover:shadow-lg hover:shadow-amber-500/10"
+      : "bg-gray-900 border-gray-800 hover:border-brand-primary/50 hover:shadow-lg hover:shadow-brand-primary/10",
+  ].join(' ');
+  const titleClassName = pinned
+    ? "text-2xl font-bold text-white transition leading-tight group-hover:text-amber-100"
+    : "text-2xl font-bold text-white group-hover:text-brand-primary transition leading-tight";
 
   useEffect(() => {
     if (isOpen) {
@@ -64,16 +74,23 @@ export default function ProjectCard({ title, description, problem, action, resul
       {/* Card Preview */}
       <div 
         onClick={() => setIsOpen(true)}
-        className="bg-gray-900 border border-gray-800 rounded-2xl p-7 md:p-8 cursor-pointer hover:border-brand-primary/50 hover:shadow-lg hover:shadow-brand-primary/10 transition-all duration-300 transform hover:-translate-y-1 group h-full flex flex-col justify-between min-h-[320px]"
+        className={cardClassName}
       >
         <div>
           <div className="flex justify-between items-start mb-4">
             <div>
-              <span className="text-xs font-mono text-brand-primary mb-2 block">{date}</span>
-              <h3 className="text-2xl font-bold text-white group-hover:text-brand-primary transition leading-tight">{title}</h3>
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className={`text-xs font-mono block ${pinned ? 'text-amber-200/90' : 'text-brand-primary'}`}>{date}</span>
+                {pinned && (
+                  <span className="project-pinned-chip inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-mono uppercase tracking-[0.18em]">
+                    Pinned
+                  </span>
+                )}
+              </div>
+              <h3 className={titleClassName}>{title}</h3>
             </div>
             {image && (
-              <div className="w-14 h-14 rounded-lg bg-gray-800 overflow-hidden ml-4 flex-shrink-0 border border-gray-700">
+              <div className={`w-14 h-14 rounded-lg overflow-hidden ml-4 flex-shrink-0 border ${pinned ? 'bg-amber-500/5 border-amber-500/20' : 'bg-gray-800 border-gray-700'}`}>
                 <img src={image} alt={title} className="w-full h-full object-cover" />
               </div>
             )}
@@ -165,11 +182,16 @@ export default function ProjectCard({ title, description, problem, action, resul
           {/* Content Area - GitHub/Markdown Style */}
           <main className={`max-w-4xl mx-auto px-4 md:px-8 pb-24 ${image ? '-mt-20 relative z-10' : 'pt-8'}`}>
             {/* Title Block */}
-            <header className="mb-10">
+            <header className={`mb-10 ${pinned ? 'project-detail-pinned' : ''}`}>
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="px-3 py-1 bg-brand-primary/20 text-brand-primary text-xs font-mono rounded-full border border-brand-primary/30">
+                <span className={`px-3 py-1 text-xs font-mono rounded-full border ${pinned ? 'project-pinned-chip' : 'bg-brand-primary/20 text-brand-primary border-brand-primary/30'}`}>
                   {date}
                 </span>
+                {pinned && (
+                  <span className="project-pinned-chip inline-flex items-center px-3 py-1 text-xs font-mono uppercase tracking-[0.18em] rounded-full">
+                    Pinned
+                  </span>
+                )}
                 {links?.docs && (
                   <a 
                     href={links.docs} 

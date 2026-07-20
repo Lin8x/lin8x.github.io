@@ -11,6 +11,7 @@ import SecretEasterEgg from '../components/game/SecretEasterEgg';
 import { getSkillsForTrack, getCertificationsForTrack, allSkills, allCertifications, courseMap, degrees } from '../data/portfolio';
 import { getExperienceForTrack, workExperience } from '../data/personal';
 import PersonalModulesPreview from '../components/PersonalModulesPreview';
+import { sortProjectsByDateDesc } from '../utils/projectOrdering';
 
 export async function getStaticPaths() {
   return TRACKS.map((track) => ({
@@ -47,16 +48,21 @@ const visibleVolunteerExperience = leadershipVolunteerExperience.slice(0, volunt
 const extraVolunteerExperience = leadershipVolunteerExperience.slice(volunteerPreviewCount);
 
 const allProjects = await getCollection('projects');
-const trackProjects = allProjects.filter((project) => 
-    activeTrack === 'all' ? true : project.data.tracks.includes(contentTrack)
-).sort((a, b) => {
-        if (a.data.featured && !b.data.featured) return -1;
-        if (!a.data.featured && b.data.featured) return 1;
-        return 0;
-});
+const trackProjects = sortProjectsByDateDesc(
+    allProjects.filter((project) => 
+        activeTrack === 'all' ? true : project.data.tracks.includes(contentTrack)
+    ).map((project) => ({
+        ...project,
+        title: project.data.title,
+        date: project.data.date,
+        pinned: project.data.pinned,
+    }))
+);
+const pinnedProjects = trackProjects.filter((project) => project.data.pinned);
+const regularProjects = trackProjects.filter((project) => !project.data.pinned);
 const projectPreviewCount = 4;
-const visibleProjects = trackProjects.slice(0, projectPreviewCount);
-const extraProjects = trackProjects.slice(projectPreviewCount);
+const visibleProjects = regularProjects.slice(0, projectPreviewCount);
+const extraProjects = regularProjects.slice(projectPreviewCount);
 
 // Set title/desc for each track
 const activeTrackMeta = TRACKS_BY_KEY[activeTrack] || TRACKS_BY_KEY['all'];
@@ -156,13 +162,13 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
             Skills
             </h2>
-            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 md:gap-4">
+            <div class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-10 gap-2.5 md:gap-3">
             {currentSkills.map(skill => (
-                <div class="flex flex-col items-center gap-2 group transition-all duration-300 hover:-translate-y-0.5">
-                <div class="w-12 h-12 md:w-14 md:h-14 bg-gray-900/50 rounded-xl flex items-center justify-center p-2.5 border border-gray-800 group-hover:border-brand-primary group-hover:bg-gray-900 transition">
+                <div class="flex flex-col items-center gap-1.5 group transition-all duration-300 hover:-translate-y-0.5">
+                <div class="w-11 h-11 md:w-12 md:h-12 bg-gray-900/50 rounded-lg flex items-center justify-center p-2 border border-gray-800 group-hover:border-brand-primary/60 group-hover:bg-gray-900 transition">
                     <img src={skill.icon} alt={skill.name} class="w-full h-full object-contain filter grayscale group-hover:grayscale-0 transition duration-300 opacity-75 group-hover:opacity-100" />
                 </div>
-                <span class="text-xs font-mono text-gray-500 group-hover:text-white transition text-center leading-tight">{skill.name}</span>
+                <span class="text-[10px] md:text-[11px] font-mono text-gray-500 group-hover:text-white transition text-center leading-tight">{skill.name}</span>
                 </div>
             ))}
             </div>
@@ -211,7 +217,7 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
                                                     )}
                                                     
                                                     <div class="flex gap-2">
-                                                        <span class="inline-block px-3 py-1 bg-purple-500/10 text-purple-400 text-xs font-bold rounded-full border border-purple-500/20">
+                                                        <span class="inline-block px-3 py-1 bg-slate-500/10 text-slate-300 text-xs font-bold rounded-full border border-slate-500/20">
                                                             OFFICIAL CERT
                                                         </span>
                                                         {cert.status === 'completed' ? (
@@ -293,6 +299,40 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
             <h2 class="text-2xl md:text-3xl font-bold text-white mb-8">
                 Projects
             </h2>
+            {pinnedProjects.length > 0 && (
+              <>
+                <div class="mb-10">
+                  <h3 class="text-lg font-bold text-gray-400 mb-5 uppercase tracking-wider">Pinned Projects</h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7">
+                    {pinnedProjects.map(async (project) => {
+                      const html = await marked.parse(project.body);
+
+                      return (
+                        <ProjectCard
+                          client:load
+                          title={project.data.title}
+                          description={project.data.description}
+                          problem={projectPar[project.id]?.problem}
+                          action={projectPar[project.id]?.action}
+                          result={projectPar[project.id]?.result}
+                          date={project.data.date}
+                          tags={project.data.tags}
+                          image={project.data.image}
+                          links={project.data.links}
+                          bodyHtml={html}
+                          pinned={project.data.pinned}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+                {regularProjects.length > 0 && (
+                  <div class="w-full h-px bg-gray-800 my-10 relative">
+                    <div class="absolute left-1/2 -translate-x-1/2 -top-3 bg-black px-4 text-gray-600 text-sm font-mono">ALL PROJECTS</div>
+                  </div>
+                )}
+              </>
+            )}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-7">
             {visibleProjects.map(async (project) => {
                 const html = await marked.parse(project.body);
@@ -310,6 +350,7 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
                     image={project.data.image}
                     links={project.data.links}
                     bodyHtml={html}
+                    pinned={project.data.pinned}
                 />
                 );
             })}
@@ -333,6 +374,7 @@ const projectPar: Record<string, { problem: string; action: string; result: stri
                           image={project.data.image}
                           links={project.data.links}
                           bodyHtml={html}
+                          pinned={project.data.pinned}
                       />
                       );
                   })}

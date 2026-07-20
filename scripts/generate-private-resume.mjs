@@ -8,12 +8,14 @@ import portfolioModule from '../src/data/portfolio.ts';
 import projectsModule from '../src/data/resumeProjects.ts';
 import personalModule from '../src/data/personal.ts';
 import resumeDocModule from '../src/components/resume/ResumeDocument.tsx';
+import projectOrderingModule from '../src/utils/projectOrdering.ts';
 
 const { TRACKS_BY_KEY, resolveTrackContentKey, getTrackWebsiteHost, PROFESSIONAL_TRACK_KEYS } = tracksModule;
 const { getSkillsForTrack, getCertificationsForTrack, courseMap, degrees } = portfolioModule;
 const { getProjectsForTrack } = projectsModule;
 const { contactInfo, professionalSummaries, getExperienceForTrack } = personalModule;
 const { ResumeDocument } = resumeDocModule;
+const { sortProjectsByDateDesc } = projectOrderingModule;
 
 const TRACKS = [...PROFESSIONAL_TRACK_KEYS];
 
@@ -218,7 +220,7 @@ function applyProjectOverrides(items, overrides) {
     next[idx] = updated;
   }
 
-  return next;
+  return sortProjectsByDateDesc(next);
 }
 
 function applyExperienceOverrides(items, overrides) {
@@ -261,6 +263,7 @@ function buildPublicResumeData(track) {
       description: p.description,
       date: p.date,
       tags: p.tags,
+      pinned: p.pinned,
     })),
     education: degrees.map((d) => ({
       title: d.title,

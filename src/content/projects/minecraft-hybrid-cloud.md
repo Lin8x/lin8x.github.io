@@ -8,6 +8,7 @@ image: "/images/projects/minecraft.jpeg"
 featured: true
 links:
   docs: ""
+pinned: true
 ---
 
 ## Overview

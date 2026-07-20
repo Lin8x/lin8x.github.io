@@ -136,14 +136,22 @@ function buildDesiredEntries(trackDefs, config) {
 }
 
 async function cfRequest(config, method, route, body) {
-  const res = await fetch(`${API_BASE}${route}`, {
-    method,
-    headers: {
-      Authorization: `Bearer ${config.api_token}`,
-      'Content-Type': 'application/json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  let res;
+  try {
+    res = await fetch(`${API_BASE}${route}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${config.api_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+  } catch (err) {
+    const cause = err?.cause?.message || err?.message || String(err);
+    throw new Error(
+      `Cloudflare API ${method} ${route} request failed before a response was received: ${cause}`
+    );
+  }
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok || data.success === false) {
@@ -524,5 +532,8 @@ async function main() {
 
 main().catch((err) => {
   console.error(`Error: ${err.message}`);
+  if (err?.cause?.message) {
+    console.error(`Cause: ${err.cause.message}`);
+  }
   process.exit(1);
 });

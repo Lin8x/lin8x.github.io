@@ -1,3 +1,5 @@
+import { sortProjectsByDateDesc } from '../utils/projectOrdering';
+
 // This file exports project data for client-side resume generation
 // Data is derived from /src/content/projects/*.md
 
@@ -8,6 +10,7 @@ export interface ResumeProject {
   tags: string[];
   tracks: string[];
   featured: boolean;
+  pinned?: boolean;
 }
 
 export const allProjects: ResumeProject[] = [
@@ -151,12 +154,7 @@ export const allProjects: ResumeProject[] = [
 
 // Helper function to get projects for a specific track
 export function getProjectsForTrack(track: string): ResumeProject[] {
-  return allProjects
-    .filter(project => project.tracks.includes(track))
-    .sort((a, b) => {
-      // Featured first
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return 0;
-    });
+  return sortProjectsByDateDesc(
+    allProjects.filter(project => project.tracks.includes(track))
+  );
 }

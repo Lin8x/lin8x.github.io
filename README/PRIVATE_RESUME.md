@@ -51,6 +51,12 @@ Edit only `private/private-resume.json`:
   ],
   "tracks": {
     "cloud": {
+      "projects": [
+        {
+          "matchTitle": "Automatic Patreon Integration",
+          "pinned": true
+        }
+      ],
       "experience": [
         {
           "entity": "Private Software Company",
@@ -70,6 +76,11 @@ Matching rules for experience patches (`experienceCompanies`, `volunteerCompanie
 Priority:
 - `experienceCompanies` and `volunteerCompanies` apply first across all tracks
 - `tracks.<track>.experience` applies second and can override a specific track only
+
+Project pinning:
+- Add `pinned: true` under `tracks.<track>.projects[]` to force a project into resume consideration for that track.
+- Resume generation still keeps the final displayed order date-based after selection.
+- If 3 or more projects are pinned, the resume shows the 3 most recent pinned projects.
 
 Note:
 - `hint` is scaffold-only metadata to help identify roles; it is ignored by PDF generation.

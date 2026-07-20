@@ -4,6 +4,7 @@ description: "Rebuilt a Dell OptiPlex into a production-grade virtualization ser
 date: "May 2025 – Present"
 tags: ["Ubuntu Server", "Docker", "PostgreSQL", "MySQL", "Jupyter Lab", "Grafana", "Prometheus", "Tailscale"]
 tracks: ["cloud", "dataengineer", "software-engineer", "it"]
+image: "/images/projects/servers.jpg"
 featured: true
 ---
 

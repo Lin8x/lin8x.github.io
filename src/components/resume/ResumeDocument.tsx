@@ -4,8 +4,11 @@ import {
   DEFAULT_RESUME_SECTION_ORDER,
   RESUME_SECTION_ORDER_BY_TRACK,
   getTrackRoleTitle,
+  getResumeSectionItemLimit,
+  type TrackKey,
   type ResumeSectionKey,
 } from '../../data/tracks';
+import { selectResumeProjects } from '../../utils/projectOrdering';
 
 const sanitizeText = (text: string): string => {
   if (!text) return '';
@@ -187,7 +190,7 @@ export interface ResumeData {
   track: string;
   skills: { name: string }[];
   certifications: { name: string; provider: string; status: string; type: string }[];
-  projects: { title: string; description: string; date: string; tags: string[] }[];
+  projects: { title: string; description: string; date: string; tags: string[]; pinned?: boolean }[];
   education: { title: string; institution: string; year: string; relevantCourses: string[] }[];
   courses: { name: string }[];
   experience: { title: string; company?: string; organizationType?: string; startDate: string; endDate: string; bullets: string[] }[];
@@ -205,9 +208,12 @@ export interface ResumeData {
 export const ResumeDocument = ({ data }: { data: ResumeData }) => {
   const trackTitle = trackNames[data.track] || 'Software Engineer';
   const relevantCourseNames = data.courses.map((c) => c.name);
-  const limitedProjects = data.projects.slice(0, 3);
+  const limitedProjects = selectResumeProjects(data.projects, 3);
   const limitedSkills = data.skills.slice(0, 16);
-  const limitedCerts = data.certifications.filter((c) => c.type === 'certification').slice(0, 2);
+  const certificationsLimit = getResumeSectionItemLimit(data.track as TrackKey, 'certifications');
+  const limitedCerts = data.certifications
+    .filter((c) => c.type === 'certification')
+    .slice(0, certificationsLimit);
   const limitedExperience = data.experience.slice(0, 3);
   const summarizedSkills = limitedSkills.map((skill) => sanitizeText(skill.name)).join(', ');
 

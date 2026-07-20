@@ -114,6 +114,16 @@ export function getSkillsForTrack(track: string): Skill[] {
 export const allCertifications: Certification[] = [
   // === OFFICIAL CERTIFICATIONS ===
   { 
+    name: 'CompTIA A+', 
+    provider: 'CompTIA', 
+    image: '/images/certs/comptia_a_plus.png', 
+    status: 'completed', 
+    type: 'certification', 
+    url: 'https://www.credly.com/badges/7b678a40-48b4-43d7-800d-4d4e0cad615a',
+    credentialId: '7b678a40-48b4-43d7-800d-4d4e0cad615a',
+    tags: ['cloud', 'software-engineer', 'it']
+  },
+  { 
     name: 'AWS Certified AI Practitioner', 
     provider: 'Amazon Web Services', 
     image: '/images/certs/ai-practitioner.png', 

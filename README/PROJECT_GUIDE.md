@@ -24,6 +24,7 @@ In `src/data/tracks.ts`, each track can define:
 - `roleAliases`: optional alternate role labels (for targeting different job title wording)
 - `contentSource`: reuse another track's data instead of retagging all content
 - `domainAliases`: subdomain aliases (e.g., `swe`, `data`)
+- `resumeSectionItemLimits`: optional per-section item caps for generated resumes
 
 Example use case:
 - Keep Cloud content, but expose an IT-targeted page/resume by setting:
@@ -54,6 +55,11 @@ Section order config:
 - `src/data/tracks.ts`
 - `DEFAULT_RESUME_SECTION_ORDER` (fallback)
 - `RESUME_SECTION_ORDER_BY_TRACK` (per-track override)
+- `DEFAULT_RESUME_SECTION_ITEM_LIMITS` (fallback item caps, including `certifications: 2`)
+
+Example cert count override:
+- In a track definition, set:
+  `resumeSectionItemLimits: { certifications: 4 }`
 
 ## Commands
 

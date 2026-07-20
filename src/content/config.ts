@@ -15,6 +15,7 @@ const projectsCollection = defineCollection({
       docs: z.string().optional(),
     }).optional(),
     featured: z.boolean().default(false), // If true, appears at top of track
+    pinned: z.boolean().default(false),
   }),
 });
 

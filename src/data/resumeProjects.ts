@@ -105,23 +105,7 @@ export const allProjects: ResumeProject[] = [
     featured: true,
   },
   {
-    title: "Developer Student Club - Game Dev Lead",
-    date: "Oct 2021 – May 2024",
-    tags: ["Unity", "C#", "Teaching", "Leadership", "YouTube"],
-    tracks: ["gamedev", "software-engineer"],
-    bullets: [
-      bullet("Led Unity workshops and developed curriculum for 30+ students covering C# scripting, optimization, and game systems", ["gamedev", "software-engineer"]),
-      bullet("Supported peer learning through hands-on technical guidance, demos, and classroom-style instruction", ["gamedev", "software-engineer"]),
-      bullet("Recognized as Developer of the Month for leadership, teaching impact, and consistent community support", ["gamedev", "software-engineer"]),
-      bullet("Prepared instructional content that translated technical development topics into approachable lessons for student audiences", ["gamedev", "software-engineer"]),
-      bullet("Helped build a learning environment focused on mentorship, peer growth, and practical implementation", ["gamedev", "software-engineer"]),
-      bullet("Presented game-development concepts in ways that supported both beginners and more advanced student contributors", ["gamedev", "software-engineer"]),
-      bullet("Reinforced technical community engagement by sharing milestones and knowledge across multiple platforms", ["gamedev", "software-engineer"]),
-    ],
-    featured: true,
-  },
-  {
-    title: "University Tech Club - Product Manager & Director",
+    title: "Nyxian Veil - Third-Person Multiplayer Shooter",
     date: "Oct 2022 – Present",
     tags: ["Unity", "C#", "Project Management", "GitHub", "Trello", "Blender"],
     tracks: ["gamedev", "software-engineer"],
@@ -281,22 +265,6 @@ export const allProjects: ResumeProject[] = [
     featured: false,
   },
   {
-    title: "University Tech Club - Full-Stack Member",
-    date: "March 2022 – Present",
-    tags: ["Unity", "C#", "Android", "Hardware", "Teamwork", "GitHub"],
-    tracks: ["gamedev", "software-engineer"],
-    bullets: [
-      bullet("Contributed to team projects spanning software, game development, Android, and hardware-focused work", ["gamedev", "software-engineer"]),
-      bullet("Collaborated across disciplines to support delivery of technical projects", ["gamedev", "software-engineer"]),
-      bullet("Adapted to different tools, workflows, and technical problem spaces across multiple project types", ["gamedev", "software-engineer"]),
-      bullet("Participated in workshop-driven and team-oriented technical projects with varied scopes", ["gamedev", "software-engineer"]),
-      bullet("Built flexibility by moving between software, gameplay, mobile, and hands-on hardware tasks", ["gamedev", "software-engineer"]),
-      bullet("Supported a collaborative environment where technical contributions were spread across several domains", ["gamedev", "software-engineer"]),
-      bullet("Strengthened cross-functional teamwork habits through repeated multi-project involvement", ["gamedev", "software-engineer"]),
-    ],
-    featured: false,
-  },
-  {
     title: "5-Day Competitive Game Jam",
     date: "May 2022",
     tags: ["Unity", "C#", "Visual Studio", "Photoshop", "Audacity", "Audio Design"],
@@ -321,7 +289,7 @@ export function getProjectsForTrack(track: string): ResumeProject[] {
       ...project,
       bullets: project.bullets.filter((item) => item.tracks.includes(track as ResumeTargetTrack)),
     }))
-    .filter((project) => project.bullets.length > 0);
+    .filter((project) => project.bullets.length >= 3);
 
   return sortProjectsByDateDesc(filteredProjects);
 }

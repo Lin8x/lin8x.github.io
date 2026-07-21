@@ -193,47 +193,22 @@ body.overflow-hidden {
   animation: shimmer 2s infinite;
 }
 
-@keyframes pinnedGlow {
-  0%, 100% {
-    border-color: rgba(245, 158, 11, 0.22);
-    box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.06), 0 18px 40px rgba(245, 158, 11, 0.05);
-  }
-  50% {
-    border-color: rgba(251, 191, 36, 0.36);
-    box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.12), 0 22px 44px rgba(245, 158, 11, 0.09);
-  }
-}
-
-@keyframes pinnedSweep {
-  0% {
-    transform: translateX(-140%);
-  }
-  100% {
-    transform: translateX(220%);
-  }
-}
-
 .project-card-pinned {
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  border-color: rgba(245, 158, 11, 0.24);
+  border-color: rgba(245, 158, 11, 0.2);
   background:
-    linear-gradient(180deg, rgba(245, 158, 11, 0.06), rgba(17, 24, 39, 0) 28%),
+    linear-gradient(180deg, rgba(245, 158, 11, 0.035), rgba(17, 24, 39, 0) 24%),
     rgba(17, 24, 39, 1);
-  animation: pinnedGlow 4.8s ease-in-out infinite;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.04), 0 14px 28px rgba(0, 0, 0, 0.18);
 }
 
 .project-card-pinned::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 1px;
   border-radius: inherit;
-  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.08) 46%, rgba(251, 191, 36, 0.18) 50%, transparent 58%);
-  transform: translateX(-140%);
-  animation: pinnedSweep 6.5s ease-in-out infinite;
+  border: 1px solid rgba(255, 248, 220, 0.025);
   pointer-events: none;
-  opacity: 0.55;
 }
 
 .project-card-pinned::after {
@@ -243,35 +218,33 @@ body.overflow-hidden {
   right: 1.25rem;
   top: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.18), transparent);
   pointer-events: none;
 }
 
 .project-pinned-chip {
-  border: 1px solid rgba(245, 158, 11, 0.2);
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), rgba(251, 191, 36, 0.06));
-  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.14);
+  background: rgba(245, 158, 11, 0.08);
+  color: #f7d27a;
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .project-detail-pinned {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(245, 158, 11, 0.18);
+  border: 1px solid rgba(245, 158, 11, 0.14);
   border-radius: 1.5rem;
   padding: 1.5rem;
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.08), rgba(17, 24, 39, 0.12) 38%, transparent 100%);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.03), rgba(17, 24, 39, 0.08) 34%, transparent 100%);
 }
 
 .project-detail-pinned::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.04) 45%, rgba(251, 191, 36, 0.1) 50%, transparent 56%);
-  transform: translateX(-140%);
-  animation: pinnedSweep 8s ease-in-out infinite;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 20%);
   pointer-events: none;
-  opacity: 0.4;
+  opacity: 0.35;
 }
 
 /* Custom Scrollbar */

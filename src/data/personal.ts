@@ -144,6 +144,8 @@ export const workExperience: WorkExperience[] = [
             wb("Played a pivotal role in development for a major tech event.", ["gamedev", "software-engineer"]),
             wb("Coordinated meetings using Trello across three departments.", ["gamedev", "software-engineer"]),
             wb("Integrated core tools including Unity, GitHub, Blender, and Visual Studio 2019.", ["gamedev", "software-engineer"]),
+            wb("Contributed across multiple technical initiatives spanning software, game development, and hands-on team support.", ["gamedev", "software-engineer"]),
+            wb("Built flexibility in collaborative, community-driven development work by supporting varied project needs beyond a single discipline.", ["gamedev", "software-engineer"]),
             wb("Helped maintain project alignment across multiple contributors, deliverables, and stakeholder expectations.", ["gamedev", "software-engineer"]),
             wb("Supported structured communication between departments to keep production on track under a compressed timeline.", ["gamedev", "software-engineer"]),
             wb("Blended planning, coordination, and technical familiarity in a leadership-oriented delivery role.", ["gamedev", "software-engineer"])
@@ -180,22 +182,6 @@ export const workExperience: WorkExperience[] = [
             wb("Helped customers make practical decisions around backup, device handling, and service options.", ["it"]),
             wb("Adapted quickly to store systems and operational workflows while maintaining strong service quality.", ["it", "software-engineer"]),
             wb("Built early hands-on support experience through direct customer interaction and technology-focused recommendations.", ["it"])
-        ]
-    },
-    {
-        title: "Full-Stack Development Member",
-        organizationType: "Community Tech Team",
-        type: "part-time",
-        startDate: "March 2022",
-        endDate: "Present",
-        tracks: ["software-engineer", "gamedev"],
-        bullets: [
-            wb("Engaged in projects spanning software, game development, Android platforms, and hardware.", ["software-engineer", "gamedev"]),
-            wb("Received commendations from peers and leadership for game development contributions.", ["gamedev", "software-engineer"]),
-            wb("Established connections with industry representatives from major tech companies.", ["software-engineer", "gamedev"]),
-            wb("Contributed across multiple technical areas rather than remaining limited to a single project type.", ["software-engineer", "gamedev"]),
-            wb("Built flexibility working in collaborative workshop and community-driven development settings.", ["software-engineer", "gamedev"]),
-            wb("Strengthened team contribution habits through repeated involvement in varied technical initiatives.", ["software-engineer", "gamedev"])
         ]
     },
     {
@@ -274,7 +260,7 @@ export function getExperienceForTrack(track: string): ResumeWorkExperience[] {
                 .filter(bullet => bullet.tracks.includes(track as ResumeTargetTrack))
                 .map(bullet => bullet.text),
         }))
-        .filter(exp => exp.bullets.length > 0)
+        .filter(exp => exp.bullets.length >= 3)
         .sort((a, b) => {
             // Sort by end date (Present first, then most recent)
             if (a.endDate === 'Present' && b.endDate !== 'Present') return -1;

@@ -43,6 +43,25 @@ Example use case:
 - Track metadata + resume section ordering:
   - `src/data/tracks.ts`
 
+## Project Writing Standard
+
+Project pages should not default to a short "overview + 3 bullets" format unless the project is intentionally tiny and low-priority.
+
+For anything you actually want to showcase, prefer a fuller writeup with:
+- a clear overview paragraph explaining what the project is and why it matters
+- a section describing the goals, scope, or problem being solved
+- a section covering implementation, architecture, or workflow details
+- a stronger set of concrete achievements or lessons learned
+- images when they genuinely help explain the work
+
+Good project pages should feel like artifacts worth showing to a recruiter or hiring manager, not just placeholder cards.
+
+When choosing what to emphasize:
+- explain the actual project, not just the organization or club it came from
+- prefer concrete responsibilities, constraints, tools, decisions, and outcomes
+- avoid vague filler like "worked on team projects" when a more specific artifact or deliverable exists
+- if an entry is really an experience item rather than a project, keep it in resume/experience data instead of forcing it into `/src/content/projects`
+
 ## Resume System
 
 Public resume UI:

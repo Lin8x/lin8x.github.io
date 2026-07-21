@@ -291,7 +291,7 @@ export const degrees: Degree[] = [
     {
         title: "B.A. in Computer Science",
         institution: "University",
-        year: "2023",
+        year: "May 2026",
         relevantCourses: [
             "Intro to Computing",
             "Intro to Programming",
@@ -321,7 +321,7 @@ export const degrees: Degree[] = [
     {
         title: "Certificate in Big Data, AI, & Ethics",
         institution: "University",
-        year: "2023",
+        year: "May 2026",
         relevantCourses: [
             "PHI 2100 Introduction to Logic",
             "PHI 4371 Truth and Deception",

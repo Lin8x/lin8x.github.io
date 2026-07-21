@@ -1,5 +1,5 @@
 ---
-title: "Hybrid Homelab + AWS Edge Gateway"
+title: "Multiplayer Hybrid Homelab & AWS Edge Gateway"
 description: "Designed and operated a hybrid hosting platform for a real-time multiplayer service, combining home lab compute with AWS edge ingress for security and reliability."
 date: "2023 - Present"
 tags: ["AWS", "EC2", "Ubuntu", "Proxmox", "Docker", "Python", "Cloudflare", "Networking"]

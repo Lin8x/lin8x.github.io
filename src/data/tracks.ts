@@ -74,12 +74,12 @@ export const TRACKS: TrackDefinition[] = [
   },
   {
     key: 'it',
-    name: 'IT Engineer',
+    name: 'IT Specalist',
     slug: 'it',
     path: '/it',
     desc: 'IT operations and infrastructure administration.',
-    roleTitle: 'IT Engineer',
-    roleAliases: ['Junior System Administrator', 'System Administrator'],
+    roleTitle: 'IT Specalist',
+    roleAliases: ['Junior System Administrator', 'System Administrator', 'IT Engineer'],
     domainAliases: ['it'],
     resumeSectionItemLimits: {
       certifications: 3,

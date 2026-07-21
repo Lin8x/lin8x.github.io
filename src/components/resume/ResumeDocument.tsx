@@ -22,6 +22,12 @@ const sanitizeText = (text: string): string => {
     .replace(/\s+/g, ' ');
 };
 
+const toSentenceStart = (text: string): string => {
+  const cleaned = sanitizeText(text);
+  if (!cleaned) return '';
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+};
+
 const styles = StyleSheet.create({
   page: {
     padding: 24,
@@ -96,25 +102,39 @@ const styles = StyleSheet.create({
     lineHeight: 1.15,
   },
   certItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     marginBottom: 2,
     paddingBottom: 1,
     borderBottom: '0.5px solid #e5e7eb',
+  },
+  certRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: 8,
   },
   certName: {
     fontSize: 7.5,
     fontWeight: 600,
     color: '#000',
+    maxWidth: '72%',
   },
   certProvider: {
     fontSize: 7,
     color: '#6b7280',
+    maxWidth: '72%',
   },
-  certStatus: {
+  certMeta: {
     fontSize: 6.5,
-    color: '#10b981',
-    fontWeight: 600,
+    color: '#4b5563',
+    textAlign: 'right',
+    minWidth: 72,
+  },
+  certId: {
+    fontSize: 6.25,
+    color: '#6b7280',
+    fontFamily: 'Courier',
+    textAlign: 'right',
+    minWidth: 72,
   },
   educationItem: {
     marginBottom: 2,
@@ -189,8 +209,15 @@ export const trackNames: Record<string, string> = PROFESSIONAL_TRACKS.reduce((ac
 export interface ResumeData {
   track: string;
   skills: { name: string }[];
-  certifications: { name: string; provider: string; status: string; type: string }[];
-  projects: { title: string; description: string; date: string; tags: string[]; pinned?: boolean }[];
+  certifications: {
+    name: string;
+    provider: string;
+    status: string;
+    type: string;
+    date?: string;
+    credentialId?: string;
+  }[];
+  projects: { title: string; date: string; tags: string[]; bullets: { text: string; tracks: string[] }[]; pinned?: boolean }[];
   education: { title: string; institution: string; year: string; relevantCourses: string[] }[];
   courses: { name: string }[];
   experience: { title: string; company?: string; organizationType?: string; startDate: string; endDate: string; bullets: string[] }[];
@@ -211,32 +238,16 @@ export const ResumeDocument = ({ data }: { data: ResumeData }) => {
   const limitedProjects = selectResumeProjects(data.projects, 3);
   const limitedSkills = data.skills.slice(0, 16);
   const certificationsLimit = getResumeSectionItemLimit(data.track as TrackKey, 'certifications');
+  const projectBulletLimit = getResumeSectionItemLimit(data.track as TrackKey, 'projectBullets');
+  const experienceBulletLimit = getResumeSectionItemLimit(data.track as TrackKey, 'experienceBullets');
   const limitedCerts = data.certifications
     .filter((c) => c.type === 'certification')
     .slice(0, certificationsLimit);
   const limitedExperience = data.experience.slice(0, 3);
   const summarizedSkills = limitedSkills.map((skill) => sanitizeText(skill.name)).join(', ');
 
-  const getProjectBullets = (project: ResumeData['projects'][number]) => {
-    const segments = (project.description || '')
-      .split(/[,;](?=\s)/)
-      .map((part) => part.trim())
-      .filter(Boolean);
-    const bullets: string[] = [];
-
-    if (segments.length) {
-      bullets.push(segments[0]);
-      if (segments[1]) bullets.push(segments[1]);
-    } else if (project.description) {
-      bullets.push(project.description.trim());
-    }
-
-    if (project.tags.length) {
-      bullets.push(`Tech stack: ${project.tags.slice(0, 5).join(', ')}`);
-    }
-
-    return bullets.slice(0, 3);
-  };
+  const getProjectBullets = (project: ResumeData['projects'][number]) =>
+    project.bullets.map((bullet) => bullet.text).slice(0, projectBulletLimit);
 
   const sectionOrder: ResumeSectionKey[] =
     RESUME_SECTION_ORDER_BY_TRACK[data.track as keyof typeof RESUME_SECTION_ORDER_BY_TRACK] ||
@@ -268,11 +279,20 @@ export const ResumeDocument = ({ data }: { data: ResumeData }) => {
           <Text style={styles.sectionTitle}>Certifications</Text>
           {limitedCerts.map((cert, i) => (
             <View key={i} style={styles.certItem}>
-              <View>
+              <View style={styles.certRow}>
                 <Text style={styles.certName}>{sanitizeText(cert.name)}</Text>
-                <Text style={styles.certProvider}>{sanitizeText(cert.provider)}</Text>
+                {cert.date ? (
+                  <Text style={styles.certMeta}>{sanitizeText(cert.date)}</Text>
+                ) : (
+                  <Text style={styles.certMeta}></Text>
+                )}
               </View>
-              <Text style={styles.certStatus}>{cert.status === 'completed' ? 'Verified' : 'In Progress'}</Text>
+              <View style={styles.certRow}>
+                <Text style={styles.certProvider}>{sanitizeText(cert.provider)}</Text>
+                {cert.credentialId && (
+                  <Text style={styles.certId}>ID: {sanitizeText(cert.credentialId)}</Text>
+                )}
+              </View>
             </View>
           ))}
         </View>
@@ -290,7 +310,7 @@ export const ResumeDocument = ({ data }: { data: ResumeData }) => {
                 <Text style={styles.projectDate}>{sanitizeText(project.date)}</Text>
               </View>
               {getProjectBullets(project).map((bullet, j) => (
-                <Text key={j} style={styles.projectBullet}>- {sanitizeText(bullet)}</Text>
+                <Text key={j} style={styles.projectBullet}>- {toSentenceStart(bullet)}</Text>
               ))}
             </View>
           ))}
@@ -314,7 +334,7 @@ export const ResumeDocument = ({ data }: { data: ResumeData }) => {
                   {[exp.company, exp.organizationType].filter(Boolean).map((v) => sanitizeText(v || '')).join(' | ')}
                 </Text>
               )}
-              {exp.bullets.slice(0, 3).map((bullet, j) => (
+              {exp.bullets.slice(0, experienceBulletLimit).map((bullet, j) => (
                 <Text key={j} style={styles.experienceBullet}>- {sanitizeText(bullet)}</Text>
               ))}
             </View>

@@ -10,6 +10,7 @@ export interface Certification {
     provider: string;
     image: string; // Path to logo/certificate image
     status: 'completed' | 'in-progress';
+    date?: string; // Optional completion/issue date for resume display
     url?: string;
     credentialId?: string; // Optional credential/certificate ID
     type: 'certification' | 'course';

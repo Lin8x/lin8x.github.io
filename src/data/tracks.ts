@@ -1,9 +1,11 @@
 export type TrackKey = 'cloud' | 'dataengineer' | 'gamedev' | 'software-engineer' | 'it' | 'all';
 export type ResumeSectionKey = 'summary' | 'skills' | 'certifications' | 'projects' | 'experience' | 'education';
-export type ResumeSectionItemLimitKey = 'certifications';
+export type ResumeSectionItemLimitKey = 'certifications' | 'projectBullets' | 'experienceBullets';
 
 export const DEFAULT_RESUME_SECTION_ITEM_LIMITS: Record<ResumeSectionItemLimitKey, number> = {
   certifications: 2,
+  projectBullets: 3,
+  experienceBullets: 3,
 };
 
 export interface TrackDefinition {
@@ -52,6 +54,8 @@ export const TRACKS: TrackDefinition[] = [
     domainAliases: ['dataengineer', 'data'],
     resumeSectionItemLimits: {
       certifications: 3,
+      projectBullets: 3,
+      experienceBullets: 3,
     },
   },
   {
@@ -74,15 +78,17 @@ export const TRACKS: TrackDefinition[] = [
   },
   {
     key: 'it',
-    name: 'IT Specalist',
+    name: 'IT Specialist',
     slug: 'it',
     path: '/it',
     desc: 'IT operations and infrastructure administration.',
-    roleTitle: 'IT Specalist',
+    roleTitle: 'IT Specialist',
     roleAliases: ['Junior System Administrator', 'System Administrator', 'IT Engineer'],
     domainAliases: ['it'],
     resumeSectionItemLimits: {
       certifications: 3,
+      projectBullets: 4,
+      experienceBullets: 4,
     },
   },
 ];

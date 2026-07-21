@@ -55,11 +55,15 @@ Section order config:
 - `src/data/tracks.ts`
 - `DEFAULT_RESUME_SECTION_ORDER` (fallback)
 - `RESUME_SECTION_ORDER_BY_TRACK` (per-track override)
-- `DEFAULT_RESUME_SECTION_ITEM_LIMITS` (fallback item caps, including `certifications: 2`)
+- `DEFAULT_RESUME_SECTION_ITEM_LIMITS` (fallback item caps, including `certifications: 2`, `projectBullets: 3`, and `experienceBullets: 3`)
 
-Example cert count override:
+Example resume item-limit override:
 - In a track definition, set:
-  `resumeSectionItemLimits: { certifications: 4 }`
+  `resumeSectionItemLimits: { certifications: 4, projectBullets: 4, experienceBullets: 4 }`
+
+Bullet selection behavior:
+- Project bullets and experience bullets are manually ordered in their data source.
+- Resume generation uses that order as the ranking and shows only the first N bullets allowed by the active track's `resumeSectionItemLimits`.
 
 ## Commands
 

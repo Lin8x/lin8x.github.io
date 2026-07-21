@@ -1,3 +1,5 @@
+import type { TrackKey } from './tracks';
+
 export interface PersonalItem {
     text: string;
     images?: string[];
@@ -43,9 +45,22 @@ export interface WorkExperience {
     type: string;            // "internship" | "full-time" | "part-time" | "leadership" | "volunteer"
     startDate: string;       // e.g., "August 2022"
     endDate: string;         // e.g., "September 2024" or "Present"
-    bullets: string[];       // Achievement bullet points (anonymized)
-    tracks: string[];        // Which career tracks this applies to
+    bullets: WorkExperienceBullet[]; // Achievement bullet points with target tracks
+    tracks: ResumeTargetTrack[];     // Which career tracks this applies to
 }
+
+export type ResumeTargetTrack = Exclude<TrackKey, 'all'>;
+
+export interface WorkExperienceBullet {
+    text: string;
+    tracks: ResumeTargetTrack[];
+}
+
+export interface ResumeWorkExperience extends Omit<WorkExperience, 'bullets'> {
+    bullets: string[];
+}
+
+const wb = (text: string, tracks: ResumeTargetTrack[]): WorkExperienceBullet => ({ text, tracks });
 
 export const workExperience: WorkExperience[] = [
     {
@@ -56,12 +71,14 @@ export const workExperience: WorkExperience[] = [
         endDate: "Present",
         tracks: ["gamedev", "software-engineer", "it"],
         bullets: [
-            "One of only two Unity developers entrusted with the creation of advanced AR and VR applications for architectural analysis and environmental data capture.",
-            "Conducted research on complex APIs including the Lightship AR Development Kit and VPS.",
-            "Deployed applications for iOS, Android, and HoloLens VR platforms.",
-            "Partnered across departments contributing to management, architectural design, and modeling efforts.",
-            "Pioneered AR application development using Lightship — the technology behind Pokémon Go.",
-            "Crafted an application offering colorblind effects in VR, optimized for wearable glasses."
+            wb("One of only two Unity developers entrusted with the creation of advanced AR and VR applications for architectural analysis and environmental data capture.", ["gamedev", "software-engineer"]),
+            wb("Conducted research on complex APIs including the Lightship AR Development Kit and VPS.", ["gamedev", "software-engineer", "it"]),
+            wb("Deployed applications for iOS, Android, and HoloLens VR platforms.", ["gamedev", "software-engineer", "it"]),
+            wb("Partnered across departments contributing to management, architectural design, and modeling efforts.", ["gamedev", "software-engineer", "it"]),
+            wb("Pioneered AR application development using Lightship — the technology behind Pokémon Go.", ["gamedev", "software-engineer"]),
+            wb("Crafted an application offering colorblind effects in VR, optimized for wearable glasses.", ["gamedev", "software-engineer"]),
+            wb("Supported cross-functional technical work spanning software delivery, platform deployment, and applied research.", ["software-engineer", "it"]),
+            wb("Built experience troubleshooting platform behavior across multiple target devices and deployment environments.", ["software-engineer", "it", "gamedev"])
         ]
     },
     {
@@ -72,12 +89,14 @@ export const workExperience: WorkExperience[] = [
         endDate: "May 2024",
         tracks: ["dataengineer", "software-engineer", "it"],
         bullets: [
-            "Conducted data analysis using Python with Seaborn and Matplotlib for advanced visualization.",
-            "Developed prediction models to generate insightful reports for data-driven decisions.",
-            "Leveraged Power BI to create interactive dashboards for stakeholder communication.",
-            "Implemented version control using Azure DevOps and Git.",
-            "Collaborated with a team of 5 interns on a successful project outcome.",
-            "Presented final outcomes to senior leadership including the CIO."
+            wb("Conducted data analysis using Python with Seaborn and Matplotlib for advanced visualization.", ["dataengineer", "software-engineer"]),
+            wb("Developed prediction models to generate insightful reports for data-driven decisions.", ["dataengineer", "software-engineer"]),
+            wb("Leveraged Power BI to create interactive dashboards for stakeholder communication.", ["dataengineer", "it"]),
+            wb("Implemented version control using Azure DevOps and Git.", ["dataengineer", "software-engineer", "it"]),
+            wb("Collaborated with a team of 5 interns on a successful project outcome.", ["dataengineer", "software-engineer", "it"]),
+            wb("Presented final outcomes to senior leadership including the CIO.", ["dataengineer", "software-engineer", "it"]),
+            wb("Used real-world public-sector data to support reporting and decision-making workflows.", ["dataengineer", "it"]),
+            wb("Strengthened communication skills by translating technical findings into stakeholder-facing outputs and presentations.", ["dataengineer", "software-engineer", "it"])
         ]
     },
     {
@@ -88,9 +107,13 @@ export const workExperience: WorkExperience[] = [
         endDate: "April 2024",
         tracks: ["software-engineer", "cloud", "it"],
         bullets: [
-            "Managed MySQL database for efficient data storage and retrieval.",
-            "Created internal automation software using Python, JavaScript, and C#.",
-            "Collaborated on tools helping a 10-person team manage communities of over 700 people."
+            wb("Managed MySQL database for efficient data storage and retrieval.", ["software-engineer", "cloud"]),
+            wb("Created internal automation software using Python, JavaScript, and C#.", ["software-engineer", "cloud"]),
+            wb("Collaborated on tools helping a 10-person team manage communities of over 700 people.", ["software-engineer", "it"]),
+            wb("Handled more than 300 customer service requests and communicated directly with customers to provide technical support and issue resolution.", ["it"]),
+            wb("Supported internal operations by building tooling that reduced repetitive work for developers and staff.", ["software-engineer", "it"]),
+            wb("Balanced technical implementation work with customer-facing issue handling in a fast-moving small-company environment.", ["it", "software-engineer"]),
+            wb("Worked across database, automation, and support responsibilities during a short internship engagement.", ["software-engineer", "cloud", "it"])
         ]
     },
     {
@@ -101,9 +124,12 @@ export const workExperience: WorkExperience[] = [
         endDate: "August 2023",
         tracks: ["gamedev", "software-engineer"],
         bullets: [
-            "Collaborated with a 9-member team to design a VR world hosting over 100 attendees.",
-            "Developed 12 Unity tools including passcode doors, control panels, and light management systems.",
-            "Leveraged Unity, GitHub, Blender, and Visual Studio for development and integration."
+            wb("Collaborated with a 9-member team to design a VR world hosting over 100 attendees.", ["gamedev", "software-engineer"]),
+            wb("Developed 12 Unity tools including passcode doors, control panels, and light management systems.", ["gamedev", "software-engineer"]),
+            wb("Leveraged Unity, GitHub, Blender, and Visual Studio for development and integration.", ["gamedev", "software-engineer"]),
+            wb("Built reusable interaction systems that supported event functionality and user experience inside a live VR environment.", ["gamedev", "software-engineer"]),
+            wb("Worked in a collaborative production setting where technical features needed to align with event and community requirements.", ["gamedev", "software-engineer"]),
+            wb("Contributed to a complex interactive environment through both systems development and team coordination.", ["gamedev", "software-engineer"])
         ]
     },
     {
@@ -114,10 +140,13 @@ export const workExperience: WorkExperience[] = [
         endDate: "Present",
         tracks: ["gamedev", "software-engineer"],
         bullets: [
-            "One of three key product managers guiding a team of 20 to release a game within 2 months.",
-            "Played a pivotal role in development for a major tech event.",
-            "Coordinated meetings using Trello across three departments.",
-            "Integrated core tools including Unity, GitHub, Blender, and Visual Studio 2019."
+            wb("One of three key product managers guiding a team of 20 to release a game within 2 months.", ["gamedev", "software-engineer"]),
+            wb("Played a pivotal role in development for a major tech event.", ["gamedev", "software-engineer"]),
+            wb("Coordinated meetings using Trello across three departments.", ["gamedev", "software-engineer"]),
+            wb("Integrated core tools including Unity, GitHub, Blender, and Visual Studio 2019.", ["gamedev", "software-engineer"]),
+            wb("Helped maintain project alignment across multiple contributors, deliverables, and stakeholder expectations.", ["gamedev", "software-engineer"]),
+            wb("Supported structured communication between departments to keep production on track under a compressed timeline.", ["gamedev", "software-engineer"]),
+            wb("Blended planning, coordination, and technical familiarity in a leadership-oriented delivery role.", ["gamedev", "software-engineer"])
         ]
     },
     {
@@ -128,9 +157,12 @@ export const workExperience: WorkExperience[] = [
         endDate: "Present",
         tracks: ["gamedev", "software-engineer"],
         bullets: [
-            "Led a team of 10 driving game development within a 2-month timeframe.",
-            "Instituted Trello across departments for streamlined workflows.",
-            "Managed essential development tools including Unity, GitHub, and Blender."
+            wb("Led a team of 10 driving game development within a 2-month timeframe.", ["gamedev", "software-engineer"]),
+            wb("Instituted Trello across departments for streamlined workflows.", ["gamedev", "software-engineer"]),
+            wb("Managed essential development tools including Unity, GitHub, and Blender.", ["gamedev", "software-engineer"]),
+            wb("Created workflow structure that improved coordination across design and implementation work.", ["gamedev", "software-engineer"]),
+            wb("Supported timely release planning through task organization, tool adoption, and team communication.", ["gamedev", "software-engineer"]),
+            wb("Built leadership experience by keeping a multi-person technical effort focused and moving forward.", ["gamedev", "software-engineer"])
         ]
     },
     {
@@ -139,11 +171,15 @@ export const workExperience: WorkExperience[] = [
         type: "part-time",
         startDate: "March 2022",
         endDate: "August 2023",
-        tracks: ["software-engineer"],
+        tracks: ["software-engineer", "it"],
         bullets: [
-            "Boosted repair sales by 60% through innovative storage backup recommendations.",
-            "Enhanced employee retention through strategic introduction of a notebook system.",
-            "Mastered company software platforms including Lightspeed and NetSuite."
+            wb("Boosted repair sales by 60% through innovative storage backup recommendations.", ["it", "software-engineer"]),
+            wb("Enhanced employee retention through strategic introduction of a notebook system.", ["it"]),
+            wb("Mastered company software platforms including Lightspeed and NetSuite.", ["it", "software-engineer"]),
+            wb("Provided customer-facing technology guidance in a fast-paced retail support environment.", ["it"]),
+            wb("Helped customers make practical decisions around backup, device handling, and service options.", ["it"]),
+            wb("Adapted quickly to store systems and operational workflows while maintaining strong service quality.", ["it", "software-engineer"]),
+            wb("Built early hands-on support experience through direct customer interaction and technology-focused recommendations.", ["it"])
         ]
     },
     {
@@ -154,9 +190,12 @@ export const workExperience: WorkExperience[] = [
         endDate: "Present",
         tracks: ["software-engineer", "gamedev"],
         bullets: [
-            "Engaged in projects spanning software, game development, Android platforms, and hardware.",
-            "Received commendations from peers and leadership for game development contributions.",
-            "Established connections with industry representatives from major tech companies."
+            wb("Engaged in projects spanning software, game development, Android platforms, and hardware.", ["software-engineer", "gamedev"]),
+            wb("Received commendations from peers and leadership for game development contributions.", ["gamedev", "software-engineer"]),
+            wb("Established connections with industry representatives from major tech companies.", ["software-engineer", "gamedev"]),
+            wb("Contributed across multiple technical areas rather than remaining limited to a single project type.", ["software-engineer", "gamedev"]),
+            wb("Built flexibility working in collaborative workshop and community-driven development settings.", ["software-engineer", "gamedev"]),
+            wb("Strengthened team contribution habits through repeated involvement in varied technical initiatives.", ["software-engineer", "gamedev"])
         ]
     },
     {
@@ -167,9 +206,12 @@ export const workExperience: WorkExperience[] = [
         endDate: "Present",
         tracks: ["gamedev"],
         bullets: [
-            "Instructed classes on game development topics including optimization, animations, and scripting.",
-            "Honored as 'Developer of the Month' for dedication and progress.",
-            "Proactively shared milestones across YouTube, personal website, and LinkedIn."
+            wb("Instructed classes on game development topics including optimization, animations, and scripting.", ["gamedev"]),
+            wb("Honored as 'Developer of the Month' for dedication and progress.", ["gamedev"]),
+            wb("Proactively shared milestones across YouTube, personal website, and LinkedIn.", ["gamedev"]),
+            wb("Supported peer development through mentorship and repeated knowledge-sharing.", ["gamedev"]),
+            wb("Helped grow interest in game-development practices within a student technical community.", ["gamedev"]),
+            wb("Built public-facing communication skills alongside technical instruction and peer support.", ["gamedev"])
         ]
     },
     {
@@ -180,8 +222,11 @@ export const workExperience: WorkExperience[] = [
         endDate: "May 2022",
         tracks: ["gamedev", "software-engineer"],
         bullets: [
-            "Delivered high-quality designs in shorter timeframes, earning executive commendations.",
-            "Collaborated directly with top-tier executives on organizational goals."
+            wb("Delivered high-quality designs in shorter timeframes, earning executive commendations.", ["gamedev", "software-engineer"]),
+            wb("Collaborated directly with top-tier executives on organizational goals.", ["gamedev", "software-engineer"]),
+            wb("Earned additional collaboration opportunities through consistent delivery and strong work quality.", ["gamedev", "software-engineer"]),
+            wb("Supported project direction by aligning visual work with team and leadership expectations.", ["gamedev", "software-engineer"]),
+            wb("Worked effectively in a design role that required both speed and stakeholder responsiveness.", ["gamedev", "software-engineer"])
         ]
     },
     {
@@ -190,11 +235,14 @@ export const workExperience: WorkExperience[] = [
         type: "leadership",
         startDate: "August 2018",
         endDate: "August 2021",
-        tracks: ["software-engineer", "cloud"],
+        tracks: ["software-engineer", "cloud", "it"],
         bullets: [
-            "Established a community where tech enthusiasts collaborate on cybersecurity skills.",
-            "Secured funding by articulating mission to investors and corporate stakeholders.",
-            "Earned accolades from educators and FBI agents for software-centric sessions."
+            wb("Established a community where tech enthusiasts collaborate on cybersecurity skills.", ["software-engineer", "cloud", "it"]),
+            wb("Secured funding by articulating mission to investors and corporate stakeholders.", ["software-engineer", "cloud", "it"]),
+            wb("Earned accolades from educators and FBI agents for software-centric sessions.", ["software-engineer", "cloud", "it"]),
+            wb("Built the organizational foundation for the club through planning, leadership, and subject-matter coordination.", ["software-engineer", "cloud", "it"]),
+            wb("Created a sustained technical learning environment around security and software-focused collaboration.", ["software-engineer", "cloud", "it"]),
+            wb("Developed early leadership experience by organizing a technical community from the ground up.", ["software-engineer", "cloud", "it"])
         ]
     },
     {
@@ -205,17 +253,28 @@ export const workExperience: WorkExperience[] = [
         endDate: "November 2019",
         tracks: ["software-engineer"],
         bullets: [
-            "Introduced Python tkinter library resources to streamline application development.",
-            "Recognized for graphic design contributions including logos and interfaces.",
-            "Coordinated projects through Discord, WhatsApp, and in-person meetups."
+            wb("Introduced Python tkinter library resources to streamline application development.", ["software-engineer"]),
+            wb("Recognized for graphic design contributions including logos and interfaces.", ["software-engineer"]),
+            wb("Coordinated projects through Discord, WhatsApp, and in-person meetups.", ["software-engineer"]),
+            wb("Supported team GUI and application-direction needs through both technical and design contributions.", ["software-engineer"]),
+            wb("Improved project clarity by facilitating communication between executives and team members.", ["software-engineer"]),
+            wb("Contributed to software projects involving messaging, password management, and interface design.", ["software-engineer"]),
+            wb("Worked across both front-end and visual-design responsibilities in a small collaborative team.", ["software-engineer"])
         ]
     }
 ];
 
 // Helper: Get work experience for a specific track
-export function getExperienceForTrack(track: string): WorkExperience[] {
+export function getExperienceForTrack(track: string): ResumeWorkExperience[] {
     return workExperience
-        .filter(exp => exp.tracks.includes(track))
+        .filter(exp => exp.tracks.includes(track as ResumeTargetTrack))
+        .map(exp => ({
+            ...exp,
+            bullets: exp.bullets
+                .filter(bullet => bullet.tracks.includes(track as ResumeTargetTrack))
+                .map(bullet => bullet.text),
+        }))
+        .filter(exp => exp.bullets.length > 0)
         .sort((a, b) => {
             // Sort by end date (Present first, then most recent)
             if (a.endDate === 'Present' && b.endDate !== 'Present') return -1;

@@ -12,6 +12,7 @@ This project keeps private resume inputs local-only.
 - `npm run resume:private:scaffold`
   - Auto-generates `private/private-resume.json`
   - Creates a timestamped backup if file already exists
+  - Pre-fills `education` so private resumes can use your real school instead of the public placeholder
   - Pre-fills contact and a single global `experienceCompanies` list with `company: "REPLACEME"`
   - Splits entries into `experienceCompanies` and `volunteerCompanies`
   - Orders entries newest-to-oldest without exposing dates
@@ -33,6 +34,13 @@ Edit only `private/private-resume.json`:
     "email": "private-email@domain.com",
     "linkedin": "linkedin.com/in/your-private-profile"
   },
+  "education": [
+    {
+      "title": "B.A. in Computer Science",
+      "institution": "Florida International University",
+      "year": "May 2026"
+    }
+  ],
   "experienceCompanies": [
     {
       "entity": "Private Software Company",
@@ -74,8 +82,10 @@ Matching rules for experience patches (`experienceCompanies`, `volunteerCompanie
 - Legacy fallback: `matchTitle`
 
 Priority:
+- `education` applies first across all tracks
 - `experienceCompanies` and `volunteerCompanies` apply first across all tracks
 - `tracks.<track>.experience` applies second and can override a specific track only
+ - `tracks.<track>.education` applies after global `education` and can override a specific track only
 
 Project pinning:
 - Add `pinned: true` under `tracks.<track>.projects[]` to force a project into resume consideration for that track.

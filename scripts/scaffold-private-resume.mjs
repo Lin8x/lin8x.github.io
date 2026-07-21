@@ -3,11 +3,17 @@ import path from 'node:path';
 
 import personalModule from '../src/data/personal.ts';
 import tracksModule from '../src/data/tracks.ts';
+import portfolioModule from '../src/data/portfolio.ts';
 
 const { workExperience, contactInfo, getExperienceForTrack } = personalModule;
 const { PROFESSIONAL_TRACK_KEYS, resolveTrackContentKey } = tracksModule;
+const { degrees } = portfolioModule;
 
 const TRACKS = [...PROFESSIONAL_TRACK_KEYS];
+const PRIVATE_EDUCATION_INSTITUTION_BY_TITLE = {
+  'B.A. in Computer Science': 'Florida International University',
+  'Certificate in Big Data, AI, & Ethics': 'Florida International University',
+};
 
 function parseDateForSort(dateValue) {
   if (!dateValue) return Number.NEGATIVE_INFINITY;
@@ -17,10 +23,16 @@ function parseDateForSort(dateValue) {
 }
 
 function buildExperienceHint(item) {
-  const firstBullet = Array.isArray(item.bullets) ? String(item.bullets[0] || '').trim() : '';
-  if (!firstBullet) return 'No summary bullet provided.';
+  const firstBullet = Array.isArray(item.bullets) ? item.bullets[0] : '';
+  const firstBulletText =
+    typeof firstBullet === 'string'
+      ? firstBullet.trim()
+      : typeof firstBullet?.text === 'string'
+        ? firstBullet.text.trim()
+        : '';
+  if (!firstBulletText) return 'No summary bullet provided.';
 
-  const oneLine = firstBullet.replace(/\s+/g, ' ');
+  const oneLine = firstBulletText.replace(/\s+/g, ' ');
   const maxLen = 140;
   if (oneLine.length <= maxLen) return oneLine;
   return `${oneLine.slice(0, maxLen - 1).trimEnd()}...`;
@@ -75,6 +87,16 @@ function buildCompanyScaffold(items, visibilityMap) {
   return [...uniqueByKey.values()];
 }
 
+function buildEducationScaffold() {
+  return degrees.map((degree) => ({
+    title: degree.title || '',
+    institution:
+      PRIVATE_EDUCATION_INSTITUTION_BY_TITLE[degree.title] ||
+      (degree.institution === 'University' ? 'REPLACEME' : degree.institution || ''),
+    year: degree.year || '',
+  }));
+}
+
 function buildScaffold() {
   const sortedExperience = sortExperienceItems(workExperience);
   const visibilityMap = buildExperienceTrackVisibilityMap();
@@ -90,6 +112,7 @@ function buildScaffold() {
       website: contactInfo.website || '',
       location: contactInfo.location || '',
     },
+    education: buildEducationScaffold(),
     // Newest to oldest. Dates are intentionally not exposed in this file.
     experienceCompanies: buildCompanyScaffold(nonVolunteerItems, visibilityMap),
     // Newest to oldest volunteer-only entries.

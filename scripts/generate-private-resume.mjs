@@ -148,10 +148,10 @@ function applyItemOverrides(items, overrides, keyField = 'title') {
   const byKey = new Map(items.map((item) => [item[keyField], { ...item }]));
 
   for (const patch of asArray(overrides)) {
-    const matchTitle = patch?.matchTitle;
-    if (!matchTitle || !byKey.has(matchTitle)) continue;
+    const matchKey = patch?.matchTitle || patch?.[keyField];
+    if (!matchKey || !byKey.has(matchKey)) continue;
 
-    const current = byKey.get(matchTitle);
+    const current = byKey.get(matchKey);
     const next = { ...current };
 
     for (const [k, v] of Object.entries(patch)) {
@@ -159,7 +159,7 @@ function applyItemOverrides(items, overrides, keyField = 'title') {
       next[k] = v;
     }
 
-    byKey.set(matchTitle, next);
+    byKey.set(matchKey, next);
   }
 
   return items.map((item) => byKey.get(item[keyField]) || item);
@@ -260,9 +260,9 @@ function buildPublicResumeData(track) {
       })),
     projects: getProjectsForTrack(contentTrack).map((p) => ({
       title: p.title,
-      description: p.description,
       date: p.date,
       tags: p.tags,
+      bullets: p.bullets,
       pinned: p.pinned,
     })),
     education: degrees.map((d) => ({
@@ -343,7 +343,12 @@ function mergeWithPrivateOverrides(base, privateData, track) {
   );
 
   const experience = applyExperienceOverrides(globallyPatchedExperience, trackOverrides.experience);
-  const education = applyItemOverrides(base.education, trackOverrides.education, 'title');
+  const globallyPatchedEducation = applyItemOverrides(
+    base.education,
+    privateData?.education,
+    'title'
+  );
+  const education = applyItemOverrides(globallyPatchedEducation, trackOverrides.education, 'title');
 
   return {
     track,

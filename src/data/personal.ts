@@ -31,7 +31,7 @@ export const professionalSummaries: Record<string, string> = {
     'dataengineer': "Data Engineer skilled in building ETL pipelines, data warehousing, and analytics infrastructure. Experience with Python, SQL databases, and data visualization tools. Passionate about transforming raw data into actionable insights.",
     'gamedev': "Game Developer with extensive Unity and Unreal Engine experience. Led teams of 10-20 developers through multiple game releases and game jams. Strong background in C#, Blueprint scripting, and cross-functional project management.",
     'software-engineer': "Software Engineer with diverse experience across cloud infrastructure, data engineering, and game development. Skilled in Python, C#, and modern DevOps practices. Passionate about building robust, user-focused applications.",
-    'it': "IT Specalist with hands-on experience in systems administration, infrastructure support, and technical operations. Skilled at improving reliability, maintaining secure environments, and resolving complex platform issues across cloud and on-prem setups.",
+    'it': "IT Specialist with hands-on experience in systems administration, infrastructure support, and technical operations. Skilled at improving reliability, maintaining secure environments, and resolving complex platform issues across cloud and on-prem setups.",
 };
 
 // ============================================
